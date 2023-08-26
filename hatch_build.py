@@ -4,4 +4,5 @@ import subprocess
 
 class BuildFrontend(BuildHookInterface):
     def initialize(self, version, build_data):
-        subprocess.run(args=['npm', 'run', 'build'], cwd='frontend')
+        subprocess.run(args=['npm', 'install'], cwd='frontend', check=True)
+        subprocess.run(args=['npm', 'run', 'build'], cwd='frontend', check=True)
