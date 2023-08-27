@@ -27,6 +27,15 @@ def get_distance(transient_tPQ, exemplar_tPQ):
     return np.linalg.norm([exemplar_P_ss - transient_P_ss, exemplar_Q_ss - transient_Q_ss]) / np.linalg.norm([exemplar_P_ss, exemplar_Q_ss])
 
 
+@app.get('/api/range')
+async def get_range():
+    range_start, range_end = app.event_db.get_range()
+
+    return {
+        'range_start': range_start,
+        'range_end': range_end
+    }
+
 @app.get('/api/data')
 async def get_data(start_ts: int, end_ts: int):
     def on_distance():
@@ -91,24 +100,7 @@ async def get_event(event_id: int):
         'distance': get_distance(event_transient, exemplar_transient)
     }
 
-
-# @app.get('/api/exemplar/{label}')
-# async def get_exemplar(label: str):
-#     exemplar_tPQ = app.event_db.exemplar(label, 'ON')
-
-#     timestamps = exemplar_tPQ[0] / 1e6
-#     timestamps -= timestamps[0]
-#     P = exemplar_tPQ[1]
-#     Q = exemplar_tPQ[2]
-
-#     return {
-#         'timestamps': timestamps.tolist(),
-#         'P': P.tolist(),
-#         'Q': Q.tolist()
-#     }
-
-static_path = files(nilmtimeline).joinpath('static')
-app.mount('/', StaticFiles(directory=static_path, html=True), name='static')
-
 def run():
+    static_path = files(nilmtimeline).joinpath('static')
+    app.mount('/', StaticFiles(directory=static_path, html=True), name='static')
     uvicorn.run('nilmtimeline.main:app', port=8001)

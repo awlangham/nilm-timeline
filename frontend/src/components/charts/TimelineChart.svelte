@@ -50,8 +50,8 @@
         )(date);
     };
 
-    const initialStartTime = new Date("09/01/2022").getTime(),
-        initialEndTime = new Date("09/03/2022").getTime();
+    const initialStartTime = start_ts,
+        initialEndTime = end_ts;
 
     let timeAxisScale = d3.scaleTime(
         [initialStartTime, initialEndTime],
