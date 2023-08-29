@@ -19,8 +19,8 @@
         width = window.innerWidth * 0.48,
         height = window.innerHeight * 0.8;
 
-    const inConfig = { delay: 400 },
-        drawConfig = { duration: 750, delay: 500 };
+    const inConfig = { delay: 0 },
+        drawConfig = { duration: 750, delay: 0 };
 
     const xMin = Math.min(...x1.concat(x2)),
         xMax = Math.max(...x1.concat(x2)),

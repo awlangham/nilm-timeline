@@ -9,7 +9,6 @@
     const dispatch = createEventDispatcher();
 
     const runSelected = () => {
-        dispatch("select");
         d3.select(bar)
             .raise()
             .transition()
@@ -17,7 +16,10 @@
             .attr("transform", "translate(0, 0)")
             .attr("height", 1000)
             .attr("width", 3000)
-            .attr("fill", "white");
+            .attr("fill", "white")
+            .on("end", () => {
+                dispatch("select");
+            });
     };
 </script>
 
