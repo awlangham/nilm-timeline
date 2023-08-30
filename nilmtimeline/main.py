@@ -3,14 +3,12 @@ from fastapi.staticfiles import StaticFiles
 import numpy as np
 import uvicorn
 from importlib.resources import files
+import click
 
 from nilmevents import get_connection
 import nilmtimeline
 
 app = FastAPI()
-
-event_set = 'tbay_engine_room'
-app.event_db = get_connection(event_set)
 
 
 def get_distance(transient_tPQ, exemplar_tPQ):
@@ -35,6 +33,7 @@ async def get_range():
         'range_start': range_start,
         'range_end': range_end
     }
+
 
 @app.get('/api/data')
 async def get_data(start_ts: int, end_ts: int):
@@ -100,7 +99,16 @@ async def get_event(event_id: int):
         'distance': get_distance(event_transient, exemplar_transient)
     }
 
-def run():
+
+@click.command()
+@click.option('-p', 'port', type=int, help='Port number to use', default=8001, show_default=True)
+@click.argument('event_set_name')
+def run(port, event_set_name):
+    """
+    Run NILM timeline for EVENT_SET_NAME
+    """
+
+    app.event_db = get_connection(event_set_name)
     static_path = files(nilmtimeline).joinpath('static')
     app.mount('/', StaticFiles(directory=static_path, html=True), name='static')
-    uvicorn.run('nilmtimeline.main:app', port=8001)
+    uvicorn.run('nilmtimeline.main:app', port=port)

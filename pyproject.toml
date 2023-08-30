@@ -18,7 +18,7 @@ authors = [
 ]
 description = "NILM timeline for load cycle tracking and diagnostics"
 requires-python = ">=3.7"
-dependencies = ["numpy", "fastapi", "uvicorn", "nilmevents"]
+dependencies = ["numpy", "fastapi", "uvicorn", "click", "nilmevents"]
 
 [project.scripts]
 nilm-timeline = "nilmtimeline.main:run"
