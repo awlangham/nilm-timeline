@@ -13,7 +13,8 @@
         exemplar_timestamps,
         exemplar_P,
         exemplar_Q,
-        selectedDistance;
+        selectedDistance,
+        selectedNumDailyRuns;
 
     const colorScale = d3.scaleOrdinal(["P", "Q"], d3.schemeTableau10);
 
@@ -30,6 +31,7 @@
                 exemplar_Q = j.exemplar.Q;
 
                 selectedDistance = j.distance;
+                selectedNumDailyRuns = j.num_daily_runs;
             });
     }
 </script>
@@ -61,7 +63,7 @@
         yAxisLabel="Reactive Power (kVar)"
     />
 
-    <DistanceInfo distance={selectedDistance} />
+    <DistanceInfo distance={selectedDistance} numDailyRuns={selectedNumDailyRuns} />
 {/await}
 
 <style>

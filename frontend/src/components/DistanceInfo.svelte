@@ -1,9 +1,10 @@
 <script>
-    export let distance;
+    export let distance, numDailyRuns;
 </script>
 
 <div>
     <p>Distance: {distance}</p>
+    <p>Num. runs in previous 24h: {numDailyRuns}</p>
 </div>
 
 <style>

@@ -16,7 +16,7 @@
 
     const marginTop = 50,
         marginBottom = 75,
-        marginLeft = 150,
+        marginLeft = 270,
         marginRight = 50,
         width = window.innerWidth,
         height = window.innerHeight;

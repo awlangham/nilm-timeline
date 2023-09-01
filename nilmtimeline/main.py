@@ -96,7 +96,8 @@ async def get_event(event_id: int):
     return {
         'transient': {'timestamps': event_timestamps.tolist(), 'P': event_P.tolist(), 'Q': event_Q.tolist()},
         'exemplar': {'timestamps': exemplar_timestamps.tolist(), 'P': exemplar_P.tolist(), 'Q': exemplar_Q.tolist()},
-        'distance': get_distance(event_transient, exemplar_transient)
+        'distance': get_distance(event_transient, exemplar_transient),
+        'num_daily_runs': app.event_db.num_daily_runs(event_id, 'ON')
     }
 
 
@@ -111,4 +112,4 @@ def run(port, event_set_name):
     app.event_db = get_connection(event_set_name)
     static_path = files(nilmtimeline).joinpath('static')
     app.mount('/', StaticFiles(directory=static_path, html=True), name='static')
-    uvicorn.run('nilmtimeline.main:app', port=port)
+    uvicorn.run('nilmtimeline.main:app', host='', port=port)
