@@ -85,9 +85,18 @@
         .call(d3.axisLeft(loadAxisScale))
         .style("font-size", "24px");
 
-    $: {
+    $: if (width > 1500) {
         d3.select(timeAxis)
-            .call(d3.axisBottom(timeAxisScale).tickFormat(multiFormat))
+            .call(d3.axisBottom(timeAxisScale).tickFormat(multiFormat)) // Adapt for portrait
+            .style("font-size", "24px");
+    } else {
+        d3.select(timeAxis)
+            .call(
+                d3
+                    .axisBottom(timeAxisScale)
+                    .tickFormat(multiFormat)
+                    .tickArguments([5])
+            )
             .style("font-size", "24px");
     }
 
@@ -95,7 +104,54 @@
         d3.select(svgPlot).call(zoom);
         dispatch("update");
     });
+
+    const zoomTransitionDuration = 200;
+
+    const zoomIn = () => {
+        d3.select(svgPlot)
+            .transition()
+            .duration(zoomTransitionDuration)
+            .call(zoom.scaleBy, 2);
+    };
+
+    const zoomOut = () => {
+        d3.select(svgPlot)
+            .transition()
+            .duration(zoomTransitionDuration)
+            .call(zoom.scaleBy, 0.5);
+    };
+
+    const translateLeft = () => {
+        const k = d3.zoomTransform(d3.select(svgPlot).node()).k;
+        d3.select(svgPlot)
+            .transition()
+            .duration(zoomTransitionDuration)
+            .call(
+                zoom.translateBy,
+                (0.3 * (width - marginLeft - marginRight)) / k,
+                0
+            );
+    };
+
+    const translateRight = () => {
+        const k = d3.zoomTransform(d3.select(svgPlot).node()).k;
+        d3.select(svgPlot)
+            .transition()
+            .duration(zoomTransitionDuration)
+            .call(
+                zoom.translateBy,
+                -(0.3 * (width - marginLeft - marginRight)) / k,
+                0
+            );
+    };
 </script>
+
+<div id="zoomPanButtons">
+    <button on:click={zoomIn}> Zoom in </button>
+    <button on:click={zoomOut}> Zoom out </button>
+    <button on:click={translateLeft}> &larr; </button>
+    <button on:click={translateRight}> &rarr; </button>
+</div>
 
 <svg id="svgPlot" bind:this={svgPlot} {width} {height}>
     <defs>
@@ -154,3 +210,14 @@
         {endTime.toLocaleString(undefined, { hour12: false })}
     </Title>
 </svg>
+
+<style>
+    #zoomPanButtons {
+        padding: 10px;
+        position: absolute;
+    }
+
+    #zoomPanButtons button {
+        font-size: 20px;
+    }
+</style>
