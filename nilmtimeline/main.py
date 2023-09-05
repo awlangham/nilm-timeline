@@ -75,7 +75,8 @@ async def get_data(start_ts: int, end_ts: int):
     #         load_data.append({'name': label, 'start_ts': current_start_times[label], 'end_ts': end_ts, 'id': current_start_ids[label], 'distance': current_distance[label]})
 
     return {
-        'loads': load_data
+        'loads': load_data,
+        'labels': app.event_db.get_labels()
     }
 
 

@@ -3,7 +3,7 @@
 
     export let selectedID;
 
-    let start_ts, end_ts, loadData;
+    let start_ts, end_ts, loadData, loadNames;
 
     let rangePromise = fetch("api/range")
         .then((response) => response.json())
@@ -17,6 +17,7 @@
             .then((response) => response.json())
             .then((j) => {
                 loadData = j.loads;
+                loadNames = j.labels.sort();
             });
     };
 </script>
@@ -27,6 +28,7 @@
         bind:start_ts
         bind:end_ts
         {loadData}
+        {loadNames}
         on:update={getData}
     />
 {/await}

@@ -8,7 +8,8 @@
     export let selectedID,
         start_ts,
         end_ts,
-        loadData = [];
+        loadData = [],
+        loadNames = [];
 
     let svgPlot, runBars, timeAxis, loadAxis;
 
@@ -70,7 +71,6 @@
         }
     });
 
-    $: loadNames = loadData.map((load) => load.name).sort();
     $: loadAxisScale = d3
         .scaleBand(loadNames, [marginTop, height - marginBottom])
         .padding(0.1);
