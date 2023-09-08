@@ -11,7 +11,7 @@
         loadData = [],
         loadNames = [];
 
-    let svgPlot, runBars, timeAxis, loadAxis;
+    let svgPlot, timeAxis, loadAxis;
 
     const dispatch = createEventDispatcher();
 
@@ -165,7 +165,7 @@
         </clipPath>
     </defs>
 
-    <g bind:this={runBars} clip-path="url(#clip-path)">
+    <g clip-path="url(#clip-path)">
         {#each loadData as d}
             <RunBar
                 start_x={timeAxisScale(d.start_ts / 1000)}
