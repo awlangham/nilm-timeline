@@ -28,7 +28,7 @@
         y={y + 2 * radius + 40}
         dominant-baseline="text-after-edge"
     >
-        Exemplar
+        Baseline
     </text>
 </g>
 
