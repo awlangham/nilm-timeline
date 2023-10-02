@@ -13,7 +13,7 @@
         });
 
     const getData = () => {
-        fetch("api/data?start_ts=" + start_ts + "&end_ts=" + end_ts)
+        fetch("api/data?start_ts=" + (2 * start_ts - end_ts) + "&end_ts=" + (2 * end_ts - start_ts))
             .then((response) => response.json())
             .then((j) => {
                 loadData = j.loads;

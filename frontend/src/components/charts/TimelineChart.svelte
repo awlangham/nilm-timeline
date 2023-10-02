@@ -172,7 +172,7 @@
                 end_x={timeAxisScale(d.end_ts / 1000)}
                 y={loadAxisScale(d.name)}
                 fill={colorScale(d.name)}
-                height={loadAxisScale.bandwidth()}
+                height={loadAxisScale.bandwidth() * (d.num_on / d.max_on)}
                 distance={d.distance}
                 on:select={() => {
                     selectedID = d.id;

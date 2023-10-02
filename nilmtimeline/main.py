@@ -1,11 +1,11 @@
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
-import numpy as np
 import uvicorn
 from importlib.resources import files
 import click
 
 from nilmevents import get_connection
+from nilmevents.utilities import trainola
 import nilmtimeline
 
 app = FastAPI()
@@ -15,14 +15,7 @@ def get_distance(transient_tPQ, exemplar_tPQ):
     # Remove the timestamp
     exemplar_PQ = exemplar_tPQ[1:]
     transient_PQ = transient_tPQ[1:]
-
-    exemplar_P_ss = np.mean(exemplar_PQ[0, -5:])
-    exemplar_Q_ss = np.mean(exemplar_PQ[1, -5:])
-
-    transient_P_ss = np.mean(transient_PQ[0, -5:])
-    transient_Q_ss = np.mean(transient_PQ[1, -5:])
-
-    return np.linalg.norm([exemplar_P_ss - transient_P_ss, exemplar_Q_ss - transient_Q_ss]) / np.linalg.norm([exemplar_P_ss, exemplar_Q_ss])
+    return trainola(exemplar_PQ, transient_PQ)
 
 
 @app.get('/api/range')
@@ -47,32 +40,39 @@ async def get_data(start_ts: int, end_ts: int):
             return None
 
     results = app.event_db.run_intervals(start_ts, end_ts)
+    loads = app.event_db.get_loads()
+
+    load_num_on = {l[0]: 0 for l in loads}
+    load_max_on = {l[0]: l[1] for l in loads}
+    load_current_start_time = {l[0]: None for l in loads}
+    load_current_start_id = {l[0]: None for l in loads}
+    load_current_distance = {l[0]: None for l in loads}
 
     load_data = []
-    current_start_times = {}
-    current_start_ids = {}
-    current_distance = {}
+
     for result in results:
         label, timestamp, on_off, event_id = result
 
-        if label not in current_start_times:
-            current_start_times[label] = None
-            current_start_ids[label] = None
-            current_distance[label] = on_distance()
-
         if on_off == 'ON':
-            current_start_times[label] = timestamp
-            current_start_ids[label] = event_id
-            current_distance[label] = on_distance()
+            if 0 < load_num_on[label] < load_max_on[label]:
+                load_data.append({'name': label, 'start_ts': load_current_start_time[label], 'end_ts': timestamp, 'id': load_current_start_id[label], 'num_on': load_num_on[label], 'max_on': load_max_on[label], 'distance': load_current_distance[label]})
+
+            load_num_on[label] += 1
+            load_current_start_time[label] = timestamp
+            load_current_start_id[label] = event_id
+            load_current_distance[label] = on_distance()
 
         elif on_off == 'OFF':
-            if current_start_times[label] is not None:
-                load_data.append({'name': label, 'start_ts': current_start_times[label], 'end_ts': timestamp, 'id': current_start_ids[label], 'distance': current_distance[label]})
-                current_start_times[label] = None
-
-    # for label in current_start_times:
-    #     if current_start_times[label] is not None:
-    #         load_data.append({'name': label, 'start_ts': current_start_times[label], 'end_ts': end_ts, 'id': current_start_ids[label], 'distance': current_distance[label]})
+            if load_num_on[label] == 1:
+                load_data.append({'name': label, 'start_ts': load_current_start_time[label], 'end_ts': timestamp, 'id': load_current_start_id[label], 'num_on': load_num_on[label], 'max_on': load_max_on[label], 'distance': load_current_distance[label]})
+                load_current_start_time[label] = None
+                load_num_on[label] -= 1
+            if load_num_on[label] > 1:
+                load_data.append({'name': label, 'start_ts': load_current_start_time[label], 'end_ts': timestamp, 'id': load_current_start_id[label], 'num_on': load_num_on[label], 'max_on': load_max_on[label], 'distance': load_current_distance[label]})
+                load_current_start_time[label] = timestamp
+                load_num_on[label] -= 1
+            
+            load_current_distance[label] = 0
 
     return {
         'loads': load_data,
