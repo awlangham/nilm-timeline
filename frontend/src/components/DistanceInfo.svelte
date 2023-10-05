@@ -3,7 +3,7 @@
 </script>
 
 <div>
-    <p>Distance: {distance}</p>
+    <p>Distance: {distance.toFixed(2)}</p>
     <p>Num. runs in previous 24h: {numDailyRuns}</p>
 </div>
 

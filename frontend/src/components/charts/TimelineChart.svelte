@@ -17,7 +17,7 @@
 
     const marginTop = 50,
         marginBottom = 75,
-        marginLeft = 270,
+        marginLeft = 300,
         marginRight = 50,
         width = window.innerWidth,
         height = window.innerHeight;
@@ -172,7 +172,7 @@
                 end_x={timeAxisScale(d.end_ts / 1000)}
                 y={loadAxisScale(d.name)}
                 fill={colorScale(d.name)}
-                height={loadAxisScale.bandwidth() * (d.num_on / d.max_on)}
+                height={loadAxisScale.bandwidth()}
                 distance={d.distance}
                 on:select={() => {
                     selectedID = d.id;
