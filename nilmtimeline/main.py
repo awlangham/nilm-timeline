@@ -57,7 +57,9 @@ async def get_data(start_ts: int, end_ts: int):
             if 0 < load_num_on[label] < load_max_on[label]:
                 load_data.append({'name': label, 'start_ts': load_current_start_time[label], 'end_ts': timestamp, 'id': load_current_start_id[label], 'num_on': load_num_on[label], 'max_on': load_max_on[label], 'distance': load_current_distance[label]})
 
-            load_num_on[label] += 1
+            if load_num_on[label] < load_max_on[label]:
+                load_num_on[label] += 1
+
             load_current_start_time[label] = timestamp
             load_current_start_id[label] = event_id
             load_current_distance[label] = on_distance()
