@@ -166,6 +166,23 @@
     } else {
         clearInterval(interval);
     }
+
+    let loadAxisGrid;
+    $: {
+        d3.select(loadAxisGrid)
+            .call(
+                d3
+                    .axisLeft(loadAxisScale)
+                    .tickSize(-(width - marginLeft - marginRight))
+                    .tickFormat("")
+                    .tickSizeOuter(0),
+            )
+            .select("path")
+            .style("display", "none");
+        d3.select(loadAxisGrid)
+            .select(".tick:first-of-type")
+            .style("display", "none");
+    }
 </script>
 
 <div id="zoomPanButtons">
@@ -208,6 +225,11 @@
             />
         {/each}
     </g>
+
+    <g
+        bind:this={loadAxisGrid}
+        transform="translate({marginLeft}, {-loadAxisScale.step() / 2})"
+    ></g>
 
     <g bind:this={loadAxis} transform="translate({marginLeft}, 0)" out:fade />
     <g
