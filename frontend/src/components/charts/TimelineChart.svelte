@@ -36,18 +36,18 @@
             d3.timeSecond(date) < date
                 ? formatMillisecond
                 : d3.timeMinute(date) < date
-                ? formatSecond
-                : d3.timeHour(date) < date
-                ? formatMinute
-                : d3.timeDay(date) < date
-                ? formatHour
-                : d3.timeMonth(date) < date
-                ? d3.timeWeek(date) < date
-                    ? formatDay
-                    : formatWeek
-                : d3.timeYear(date) < date
-                ? formatMonth
-                : formatYear
+                  ? formatSecond
+                  : d3.timeHour(date) < date
+                    ? formatMinute
+                    : d3.timeDay(date) < date
+                      ? formatHour
+                      : d3.timeMonth(date) < date
+                        ? d3.timeWeek(date) < date
+                            ? formatDay
+                            : formatWeek
+                        : d3.timeYear(date) < date
+                          ? formatMonth
+                          : formatYear
         )(date);
     };
 
@@ -56,7 +56,7 @@
 
     let timeAxisScale = d3.scaleTime(
         [initialStartTime, initialEndTime],
-        [marginLeft, width - marginRight]
+        [marginLeft, width - marginRight],
     );
     const origTimeAxisScale = timeAxisScale.copy();
 
@@ -95,7 +95,7 @@
                 d3
                     .axisBottom(timeAxisScale)
                     .tickFormat(multiFormat)
-                    .tickArguments([5])
+                    .tickArguments([5]),
             )
             .style("font-size", "24px");
     }
@@ -129,7 +129,7 @@
             .call(
                 zoom.translateBy,
                 (0.3 * (width - marginLeft - marginRight)) / k,
-                0
+                0,
             );
     };
 
@@ -141,9 +141,31 @@
             .call(
                 zoom.translateBy,
                 -(0.3 * (width - marginLeft - marginRight)) / k,
-                0
+                0,
             );
     };
+
+    const jumpToNow = () => {
+        d3.select(svgPlot)
+            .transition()
+            .duration(zoomTransitionDuration)
+            .call(
+                zoom.translateTo,
+                origTimeAxisScale(new Date().getTime()),
+                0,
+                [origTimeAxisScale.range()[1], null],
+            );
+    };
+
+    let interval,
+        autoRefresh = false;
+    $: if (autoRefresh) {
+        interval = setInterval(() => {
+            jumpToNow();
+        }, 1000);
+    } else {
+        clearInterval(interval);
+    }
 </script>
 
 <div id="zoomPanButtons">
@@ -151,6 +173,12 @@
     <button on:click={zoomOut}> Zoom out </button>
     <button on:click={translateLeft}> &larr; </button>
     <button on:click={translateRight}> &rarr; </button>
+    <input
+        type="checkbox"
+        id="auto-refresh-checkbox"
+        bind:checked={autoRefresh}
+    />
+    <label for="auto-refresh-checkbox"> Auto Refresh </label>
 </div>
 
 <svg id="svgPlot" bind:this={svgPlot} {width} {height}>
@@ -172,7 +200,7 @@
                 end_x={timeAxisScale(d.end_ts / 1000)}
                 y={loadAxisScale(d.name)}
                 fill={colorScale(d.name)}
-                height={loadAxisScale.bandwidth() * d.num_on / d.max_on}
+                height={(loadAxisScale.bandwidth() * d.num_on) / d.max_on}
                 distance={d.distance}
                 on:select={() => {
                     selectedID = d.id;
