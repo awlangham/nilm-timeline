@@ -9,8 +9,8 @@
 
     let xAxis, yAxis;
 
-    const yMinDefault = -500,
-        yMaxDefault = 4000;
+    const yMinDefault = -50,
+        yMaxDefault = 50;
 
     const marginTop = 50,
         marginBottom = 75,
