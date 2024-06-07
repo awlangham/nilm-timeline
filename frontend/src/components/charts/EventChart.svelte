@@ -22,18 +22,28 @@
     const inConfig = { delay: 0 },
         drawConfig = { duration: 750, delay: 0 };
 
-    const xMin = Math.min(...x1.concat(x2)),
-        xMax = Math.max(...x1.concat(x2)),
-        yMin = Math.min(...y1.concat(y2).concat([yMinDefault])),
+    const haveExemplar = x2 && y2;
+
+    let xMin, xMax, yMin, yMax;
+    if (haveExemplar) {
+        xMin = Math.min(...x1.concat(x2));
+        xMax = Math.max(...x1.concat(x2));
+        yMin = Math.min(...y1.concat(y2).concat([yMinDefault]));
         yMax = Math.max(...y1.concat(y2).concat([yMaxDefault]));
+    } else {
+        xMin = Math.min(...x1);
+        xMax = Math.max(...x1);
+        yMin = Math.min(...y1.concat([yMinDefault]));
+        yMax = Math.max(...y1.concat([yMaxDefault]));
+    }
 
     const xAxisScale = d3.scaleLinear(
             [xMin, xMax],
-            [marginLeft, width - marginRight]
+            [marginLeft, width - marginRight],
         ),
         yAxisScale = d3.scaleLinear(
             [yMin / 1000, yMax / 1000],
-            [height - marginBottom, marginTop]
+            [height - marginBottom, marginTop],
         );
 
     const path = d3
@@ -53,15 +63,17 @@
 </script>
 
 <svg {width} {height}>
-    <Legend {c1} x={marginLeft + 20} y={marginTop + 20} {inConfig} />
+    <Legend {c1} {haveExemplar} x={marginLeft + 20} y={marginTop + 20} {inConfig} />
 
-    <path
-        d={path(y2)}
-        fill="none"
-        stroke={exemplarColor}
-        stroke-width="3px"
-        transition:draw={drawConfig}
-    />
+    {#if haveExemplar}
+        <path
+            d={path(y2)}
+            fill="none"
+            stroke={exemplarColor}
+            stroke-width="3px"
+            transition:draw={drawConfig}
+        />
+    {/if}
     <path
         d={path(y1)}
         fill="none"

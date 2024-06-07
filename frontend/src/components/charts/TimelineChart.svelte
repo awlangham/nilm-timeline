@@ -5,7 +5,7 @@
     import RunBar from "../visuals/RunBar.svelte";
     import Title from "../visuals/Title.svelte";
 
-    export let selectedID,
+    export let selectedTimestamp,
         start_ts,
         end_ts,
         loadData = [],
@@ -220,7 +220,7 @@
                 height={(loadAxisScale.bandwidth() * d.num_on) / d.max_on}
                 distance={d.distance}
                 on:select={() => {
-                    selectedID = d.id;
+                    selectedTimestamp = d.start_ts;
                 }}
             />
         {/each}

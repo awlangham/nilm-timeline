@@ -2,11 +2,11 @@
     import EventView from "./views/EventView.svelte";
     import TimelineView from "./views/TimelineView.svelte";
 
-    let selectedID = -1;
+    let selectedTimestamp = -1;
 </script>
 
-{#if selectedID === -1}
-    <TimelineView bind:selectedID />
+{#if selectedTimestamp === -1}
+    <TimelineView bind:selectedTimestamp />
 {:else}
-    <EventView bind:selectedID />
+    <EventView bind:selectedTimestamp />
 {/if}

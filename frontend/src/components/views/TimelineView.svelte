@@ -1,7 +1,7 @@
 <script>
     import TimelineChart from "../charts/TimelineChart.svelte";
 
-    export let selectedID;
+    export let selectedTimestamp;
 
     let start_ts, end_ts, loadData, loadNames;
 
@@ -29,7 +29,7 @@
 
 {#await rangePromise then}
     <TimelineChart
-        bind:selectedID
+        bind:selectedTimestamp
         bind:start_ts
         bind:end_ts
         {loadData}

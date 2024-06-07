@@ -2,7 +2,7 @@
     import { fade } from "svelte/transition";
     import { exemplarColor } from "../../constants.js";
 
-    export let c1, x, y, inConfig;
+    export let haveExemplar, c1, x, y, inConfig;
 
     const radius = 10;
 </script>
@@ -17,19 +17,21 @@
         Selected
     </text>
 
-    <circle
-        cx={x + radius}
-        cy={y + radius + 40}
-        r={radius}
-        fill={exemplarColor}
-    />
-    <text
-        x={x + 2 * radius + 10}
-        y={y + 2 * radius + 40}
-        dominant-baseline="text-after-edge"
-    >
-        Baseline
-    </text>
+    {#if haveExemplar}
+        <circle
+            cx={x + radius}
+            cy={y + radius + 40}
+            r={radius}
+            fill={exemplarColor}
+        />
+        <text
+            x={x + 2 * radius + 10}
+            y={y + 2 * radius + 40}
+            dominant-baseline="text-after-edge"
+        >
+            Baseline
+        </text>
+    {/if}
 </g>
 
 <style>

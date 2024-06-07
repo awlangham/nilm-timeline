@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+import numpy as np
 from joule.api import get_node
 
 from nilmtimeline.interval import Interval
@@ -50,4 +51,24 @@ async def get_data(start_ts: int, end_ts: int):
     return {
         'loads': intervals,
         'labels': list(load_names)
+    }
+
+
+@app.get('/api/event/{timestamp}')
+async def get_event(timestamp: int):
+    node = get_node()
+    data = await node.data_read_array(app.dataset + '/transients', flatten=True, start=timestamp, end=timestamp + 1e6)
+    await node.close()
+
+    event_timestamps = data[:, 0] - data[0, 0]
+    event_timestamps = event_timestamps / 1e6
+    event_P = data[:, 1] - np.mean(data[:5, 1])
+    event_Q = data[:, 2] - np.mean(data[:5, 2])
+
+    return {
+        'transient': {'timestamps': event_timestamps.tolist(), 'P': event_P.tolist(), 'Q': event_Q.tolist()},
+        # TODO: find exemplar from Merlin
+        'exemplar': None,
+        'distance': 0,  # TODO
+        # 'num_daily_runs': 0  # TODO
     }

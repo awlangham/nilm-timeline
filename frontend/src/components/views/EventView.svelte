@@ -3,7 +3,7 @@
     import EventChart from "../charts/EventChart.svelte";
     import DistanceInfo from "../DistanceInfo.svelte";
 
-    export let selectedID;
+    export let selectedTimestamp;
 
     let transientPromise;
 
@@ -18,17 +18,19 @@
 
     const colorScale = d3.scaleOrdinal(["P", "Q"], d3.schemeTableau10);
 
-    $: if (selectedID != -1) {
-        transientPromise = fetch("api/event/" + selectedID)
+    $: if (selectedTimestamp != -1) {
+        transientPromise = fetch("api/event/" + selectedTimestamp)
             .then((response) => response.json())
             .then((j) => {
                 transient_timestamps = j.transient.timestamps;
                 transient_P = j.transient.P;
                 transient_Q = j.transient.Q;
 
-                exemplar_timestamps = j.exemplar.timestamps;
-                exemplar_P = j.exemplar.P;
-                exemplar_Q = j.exemplar.Q;
+                if (j.exemplar) {
+                    exemplar_timestamps = j.exemplar.timestamps;
+                    exemplar_P = j.exemplar.P;
+                    exemplar_Q = j.exemplar.Q;
+                }
 
                 selectedDistance = j.distance;
                 selectedNumDailyRuns = j.num_daily_runs;
@@ -39,7 +41,7 @@
 <button
     id="back-btn"
     on:click={() => {
-        selectedID = -1;
+        selectedTimestamp = -1;
     }}
 >
     Back
@@ -63,7 +65,10 @@
         yAxisLabel="Reactive Power (kVar)"
     />
 
-    <DistanceInfo distance={selectedDistance} numDailyRuns={selectedNumDailyRuns} />
+    <!-- <DistanceInfo
+        distance={selectedDistance}
+        numDailyRuns={selectedNumDailyRuns}
+    /> -->
 {/await}
 
 <style>
