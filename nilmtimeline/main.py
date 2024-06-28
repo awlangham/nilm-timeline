@@ -1,6 +1,8 @@
 from fastapi import FastAPI
+import json
 import numpy as np
 from joule.api import get_node
+from joule.utilities import timestamp_to_human as ts2h
 
 from nilmtimeline.interval import Interval
 
@@ -65,10 +67,21 @@ async def get_event(timestamp: int):
     event_P = data[:, 1] - np.mean(data[:5, 1])
     event_Q = data[:, 2] - np.mean(data[:5, 2])
 
+    events = await node.event_stream_read(app.dataset + '/events', start=timestamp, end=timestamp + 1)
+    event_label = events[0].content['label']
+
+    json_filter = json.dumps([[['label', 'is', event_label], ['type', 'is', 'OFF to ON']]])
+    filtered_events = await node.event_stream_read(app.dataset + '/events', start=timestamp - 24 * 60 * 60e6, end=timestamp, json_filter=json_filter)
+
+    metrics = {'num_runs_24h': len(filtered_events)}
+
+    # Get metrics for this load
+    # average run time in last 24 hours
+    # distance from exemplar
+
     return {
         'transient': {'timestamps': event_timestamps.tolist(), 'P': event_P.tolist(), 'Q': event_Q.tolist()},
         # TODO: find exemplar from Merlin
         'exemplar': None,
-        'distance': 0,  # TODO
-        # 'num_daily_runs': 0  # TODO
+        'metrics': metrics
     }

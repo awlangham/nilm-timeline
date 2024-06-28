@@ -1,7 +1,7 @@
 <script>
     import * as d3 from "d3";
     import EventChart from "../charts/EventChart.svelte";
-    import DistanceInfo from "../DistanceInfo.svelte";
+    import MetricsView from "../MetricsView.svelte";
 
     export let selectedTimestamp;
 
@@ -13,8 +13,7 @@
         exemplar_timestamps,
         exemplar_P,
         exemplar_Q,
-        selectedDistance,
-        selectedNumDailyRuns;
+        metrics;
 
     const colorScale = d3.scaleOrdinal(["P", "Q"], d3.schemeTableau10);
 
@@ -32,8 +31,7 @@
                     exemplar_Q = j.exemplar.Q;
                 }
 
-                selectedDistance = j.distance;
-                selectedNumDailyRuns = j.num_daily_runs;
+                metrics = j.metrics;
             });
     }
 </script>
@@ -65,10 +63,7 @@
         yAxisLabel="Reactive Power (kVar)"
     />
 
-    <!-- <DistanceInfo
-        distance={selectedDistance}
-        numDailyRuns={selectedNumDailyRuns}
-    /> -->
+    <MetricsView {metrics} />
 {/await}
 
 <style>
