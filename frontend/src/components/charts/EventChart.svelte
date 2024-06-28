@@ -4,23 +4,20 @@
     import Legend from "../visuals/Legend.svelte";
     import { onMount } from "svelte";
     import { exemplarColor } from "../../constants";
+    import {
+        yMinDefault,
+        yMaxDefault,
+        margin,
+        inConfig,
+        drawConfig,
+    } from "./utilities";
 
     export let x1, y1, c1, x2, y2, yAxisLabel;
 
     let xAxis, yAxis;
 
-    const yMinDefault = -50,
-        yMaxDefault = 50;
-
-    const marginTop = 50,
-        marginBottom = 75,
-        marginLeft = 150,
-        marginRight = 50,
-        width = window.innerWidth * 0.48,
+    const width = window.innerWidth * 0.48,
         height = window.innerHeight * 0.8;
-
-    const inConfig = { delay: 0 },
-        drawConfig = { duration: 750, delay: 0 };
 
     const haveExemplar = x2 && y2;
 
@@ -39,11 +36,11 @@
 
     const xAxisScale = d3.scaleLinear(
             [xMin, xMax],
-            [marginLeft, width - marginRight],
+            [margin.left, width - margin.right],
         ),
         yAxisScale = d3.scaleLinear(
             [yMin / 1000, yMax / 1000],
-            [height - marginBottom, marginTop],
+            [height - margin.bottom, margin.top],
         );
 
     const path = d3
@@ -63,7 +60,13 @@
 </script>
 
 <svg {width} {height}>
-    <Legend {c1} {haveExemplar} x={marginLeft + 20} y={marginTop + 20} {inConfig} />
+    <Legend
+        {c1}
+        {haveExemplar}
+        x={margin.left + 20}
+        y={margin.top + 20}
+        {inConfig}
+    />
 
     {#if haveExemplar}
         <path
@@ -84,18 +87,18 @@
 
     <g
         bind:this={yAxis}
-        transform="translate({marginLeft}, 0)"
+        transform="translate({margin.left}, 0)"
         in:fade={inConfig}
     />
     <g
         bind:this={xAxis}
-        transform="translate(0, {height - marginBottom})"
+        transform="translate(0, {height - margin.bottom})"
         in:fade={inConfig}
     />
 
     <text
         x="50%"
-        y={height - marginBottom + 60}
+        y={height - margin.bottom + 60}
         text-anchor="middle"
         font-family="sans-serif"
         font-size="24px"
