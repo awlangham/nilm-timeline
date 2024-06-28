@@ -5,6 +5,7 @@ from joule.api import get_node
 from joule.utilities import timestamp_to_human as ts2h
 
 from nilmtimeline.interval import Interval
+from nilmtimeline.find_intervals import find_intervals
 
 app = FastAPI()
 
@@ -70,13 +71,19 @@ async def get_event(timestamp: int):
     events = await node.event_stream_read(app.dataset + '/events', start=timestamp, end=timestamp + 1)
     event_label = events[0].content['label']
 
-    json_filter = json.dumps([[['label', 'is', event_label], ['type', 'is', 'OFF to ON']]])
-    filtered_events = await node.event_stream_read(app.dataset + '/events', start=timestamp - 24 * 60 * 60e6, end=timestamp, json_filter=json_filter)
+    json_filter = json.dumps([[['label', 'is', event_label]]])
+    last_24h_events = await node.event_stream_read(app.dataset + '/events', start=timestamp - 24 * 60 * 60e6, end=timestamp, json_filter=json_filter)
 
-    metrics = {'num_runs_24h': len(filtered_events)}
+    last_24h_ons = [event for event in last_24h_events if event.content['type'] == 'OFF to ON']
+    run_durations = [interval['end_ts'] - interval['start_ts'] for interval in find_intervals(last_24h_events)]
+    
+
+    metrics = {
+        'num_runs_24h': len(last_24h_ons),
+        'avg_run_duration': np.mean(run_durations) / 1e6
+    }
 
     # Get metrics for this load
-    # average run time in last 24 hours
     # distance from exemplar
 
     return {
