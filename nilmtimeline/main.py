@@ -14,13 +14,12 @@ app = FastAPI()
 
 @app.get('/api/range')
 async def get_range():
-
     node = get_node()
     event_info = await node.event_stream_info(app.dataset + '/events')
     await node.close()
 
     return {
-        'range_start': event_info.start,
+        'range_start': event_info.end - 24 * 60 * 60e6,
         'range_end': event_info.end
     }
 
