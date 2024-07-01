@@ -36,8 +36,6 @@
             [height - margin.bottom, margin.top],
         );
 
-    $: console.log(yAxisScale.ticks(4));
-
     const path = d3
         .line()
         .x((d, idx) => xAxisScale(x1[idx]))
@@ -56,8 +54,6 @@
 
 <div class="event-chart-container">
     <svg {width} {height}>
-        <Legend {c1} {haveExemplar} x={margin.left + 20} y={margin.top + 20} />
-
         {#if haveExemplar}
             <path
                 d={path(y2)}
@@ -135,6 +131,8 @@
         >
             {yAxisLabel}
         </text>
+
+        <Legend {c1} {haveExemplar} x={margin.left + 20} y={margin.top + 20} />
     </svg>
 </div>
 
