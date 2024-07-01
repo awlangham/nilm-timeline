@@ -45,33 +45,42 @@
     Back
 </button>
 
-{#await transientPromise then}
-    <EventChart
-        x1={transient_timestamps}
-        y1={transient_P}
-        c1={colorScale("P")}
-        x2={exemplar_timestamps}
-        y2={exemplar_P}
-        yAxisLabel="Active Power (kW)"
-    />
-    <EventChart
-        x1={transient_timestamps}
-        y1={transient_Q}
-        c1={colorScale("Q")}
-        x2={exemplar_timestamps}
-        y2={exemplar_Q}
-        yAxisLabel="Reactive Power (kVar)"
-    />
+<div class="event-view-container">
+    {#await transientPromise then}
+        <EventChart
+            x1={transient_timestamps}
+            y1={transient_P}
+            c1={colorScale("P")}
+            x2={exemplar_timestamps}
+            y2={exemplar_P}
+            yAxisLabel="Active Power (kW)"
+        />
 
-    <MetricsView {metrics} />
-{/await}
+        <EventChart
+            x1={transient_timestamps}
+            y1={transient_Q}
+            c1={colorScale("Q")}
+            x2={exemplar_timestamps}
+            y2={exemplar_Q}
+            yAxisLabel="Reactive Power (kVar)"
+        />
+
+        <MetricsView {metrics} />
+    {/await}
+</div>
 
 <style>
     #back-btn {
         position: absolute;
-        top: 10px;
-        left: 15px;
+        top: 20px;
+        left: 25px;
         font-family: sans-serif;
         font-size: 24px;
+    }
+
+    .event-view-container {
+        display: flex;
+        flex-wrap: wrap;
+        margin-top: 10px;
     }
 </style>

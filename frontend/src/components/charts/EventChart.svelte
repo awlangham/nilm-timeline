@@ -52,38 +52,55 @@
     });
 </script>
 
-<svg {width} {height}>
-    <Legend {c1} {haveExemplar} x={margin.left + 20} y={margin.top + 20} />
+<div class="event-chart-container">
+    <svg {width} {height}>
+        <Legend {c1} {haveExemplar} x={margin.left + 20} y={margin.top + 20} />
 
-    {#if haveExemplar}
-        <path
-            d={path(y2)}
-            fill="none"
-            stroke={exemplarColor}
-            stroke-width="3px"
+        {#if haveExemplar}
+            <path
+                d={path(y2)}
+                fill="none"
+                stroke={exemplarColor}
+                stroke-width="3px"
+            />
+        {/if}
+        <path d={path(y1)} fill="none" stroke={c1} stroke-width="3px" />
+
+        <g bind:this={yAxis} transform="translate({margin.left}, 0)" />
+        <g
+            bind:this={xAxis}
+            transform="translate(0, {height - margin.bottom})"
         />
-    {/if}
-    <path d={path(y1)} fill="none" stroke={c1} stroke-width="3px" />
 
-    <g bind:this={yAxis} transform="translate({margin.left}, 0)" />
-    <g bind:this={xAxis} transform="translate(0, {height - margin.bottom})" />
+        <text
+            x="50%"
+            y={height - margin.bottom + 60}
+            text-anchor="middle"
+            font-family="sans-serif"
+            font-size="24px"
+        >
+            Time (s)
+        </text>
 
-    <text
-        x="50%"
-        y={height - margin.bottom + 60}
-        text-anchor="middle"
-        font-family="sans-serif"
-        font-size="24px"
-    >
-        Time (s)
-    </text>
+        <text
+            transform="translate(50, {height / 2}),rotate(-90)"
+            text-anchor="middle"
+            font-family="sans-serif"
+            font-size="24px"
+        >
+            {yAxisLabel}
+        </text>
+    </svg>
+</div>
 
-    <text
-        transform="translate(50, {height / 2}),rotate(-90)"
-        text-anchor="middle"
-        font-family="sans-serif"
-        font-size="24px"
-    >
-        {yAxisLabel}
-    </text>
-</svg>
+<style>
+    .event-chart-container {
+        width: 48%;
+        margin-left: auto;
+        margin-right: auto;
+        border: 2px solid gray;
+        border-radius: 10px;
+        box-shadow: 3px 1px 4px #888;
+        background-color: white;
+    }
+</style>
