@@ -36,9 +36,14 @@
             [height - margin.bottom, margin.top],
         );
 
-    const path = d3
+    const path1 = d3
         .line()
         .x((d, idx) => xAxisScale(x1[idx]))
+        .y((d) => yAxisScale(d / 1000));
+
+    const path2 = d3
+        .line()
+        .x((d, idx) => xAxisScale(x2[idx]))
         .y((d) => yAxisScale(d / 1000));
 
     onMount(() => {
@@ -56,13 +61,13 @@
     <svg {width} {height}>
         {#if haveExemplar}
             <path
-                d={path(y2)}
+                d={path2(y2)}
                 fill="none"
                 stroke={exemplarColor}
                 stroke-width="3px"
             />
         {/if}
-        <path d={path(y1)} fill="none" stroke={c1} stroke-width="3px" />
+        <path d={path1(y1)} fill="none" stroke={c1} stroke-width="3px" />
 
         <g bind:this={yAxis} transform="translate({margin.left}, 0)" />
         <g

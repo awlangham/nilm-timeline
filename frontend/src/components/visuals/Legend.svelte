@@ -17,7 +17,7 @@
         stroke-width="1px"
         rx="10px"
         ry="10px"
-    ></rect>
+    />
     <circle cx={x + radius} cy={y + radius} r={radius} fill={c1} />
     <text
         x={x + 2 * radius + 10}
