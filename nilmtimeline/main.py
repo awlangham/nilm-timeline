@@ -2,7 +2,9 @@ from fastapi import FastAPI
 import json
 import numpy as np
 from joule.api import get_node
-from joule.utilities import timestamp_to_human as ts2h
+
+from merlin.installation import load_exemplar
+from merlin.supervised.trainola import trainola
 
 from nilmtimeline.interval import Interval
 from nilmtimeline.find_intervals import find_intervals
@@ -61,7 +63,6 @@ async def get_data(start_ts: int, end_ts: int):
 async def get_event(timestamp: int):
     node = get_node()
     data = await node.data_read_array(app.dataset + '/transients', flatten=True, start=timestamp, end=timestamp + 1e6)
-    await node.close()
 
     event_timestamps = data[:, 0] - data[0, 0]
     event_timestamps = event_timestamps / 1e6
@@ -71,24 +72,28 @@ async def get_event(timestamp: int):
     events = await node.event_stream_read(app.dataset + '/events', start=timestamp, end=timestamp + 1)
     event_label = events[0].content['label']
 
+    off_on_exemplar = await load_exemplar(event_label, 'OFF', 'ON')
+    exemplar_timestamps = off_on_exemplar[:, 0] - off_on_exemplar[0, 0]
+    exemplar_timestamps = exemplar_timestamps / 1e6
+    exemplar_P = off_on_exemplar[:, 1] - np.mean(off_on_exemplar[:5, 1])
+    exemplar_Q = off_on_exemplar[:, 2] - np.mean(off_on_exemplar[:5, 2])
+
     json_filter = json.dumps([[['label', 'is', event_label]]])
     last_24h_events = await node.event_stream_read(app.dataset + '/events', start=timestamp - 24 * 60 * 60e6, end=timestamp, json_filter=json_filter)
 
+    await node.close()
+
     last_24h_ons = [event for event in last_24h_events if event.content['type'] == 'OFF to ON']
     run_durations = [interval['end_ts'] - interval['start_ts'] for interval in find_intervals(last_24h_events)]
-    
 
     metrics = {
         'num_runs_24h': len(last_24h_ons),
-        'avg_run_duration': np.mean(run_durations) / 1e6
+        'avg_run_duration': np.mean(run_durations) / 1e6,
+        'distance_from_exemplar': trainola(data.T, off_on_exemplar.T)
     }
-
-    # Get metrics for this load
-    # distance from exemplar
 
     return {
         'transient': {'timestamps': event_timestamps.tolist(), 'P': event_P.tolist(), 'Q': event_Q.tolist()},
-        # TODO: find exemplar from Merlin
-        'exemplar': None,
+        'exemplar': {'timestamps': exemplar_timestamps.tolist(), 'P': exemplar_P.tolist(), 'Q': exemplar_Q.tolist()},
         'metrics': metrics
     }

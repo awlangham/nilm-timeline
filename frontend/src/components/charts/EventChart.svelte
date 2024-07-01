@@ -1,16 +1,10 @@
 <script>
     import * as d3 from "d3";
-    import { draw, fade } from "svelte/transition";
+    import { fade } from "svelte/transition";
     import Legend from "../visuals/Legend.svelte";
     import { onMount } from "svelte";
     import { exemplarColor } from "../../constants";
-    import {
-        yMinDefault,
-        yMaxDefault,
-        margin,
-        inConfig,
-        drawConfig,
-    } from "./utilities";
+    import { yMinDefault, yMaxDefault, margin, inConfig } from "./utilities";
 
     export let x1, y1, c1, x2, y2, yAxisLabel;
 
@@ -74,16 +68,9 @@
             fill="none"
             stroke={exemplarColor}
             stroke-width="3px"
-            transition:draw={drawConfig}
         />
     {/if}
-    <path
-        d={path(y1)}
-        fill="none"
-        stroke={c1}
-        stroke-width="3px"
-        transition:draw={drawConfig}
-    />
+    <path d={path(y1)} fill="none" stroke={c1} stroke-width="3px" />
 
     <g
         bind:this={yAxis}
