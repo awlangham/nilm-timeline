@@ -3,7 +3,7 @@
     import Legend from "../visuals/Legend.svelte";
     import { onMount } from "svelte";
     import { exemplarColor } from "../../constants";
-    import { yMinDefault, yMaxDefault, margin } from "./utilities";
+    import { yPadding, margin } from "./utilities";
 
     export let x1, y1, c1, x2, y2, yAxisLabel;
 
@@ -18,13 +18,13 @@
     if (haveExemplar) {
         xMin = Math.min(...x1.concat(x2));
         xMax = Math.max(...x1.concat(x2));
-        yMin = Math.min(...y1.concat(y2).concat([yMinDefault]));
-        yMax = Math.max(...y1.concat(y2).concat([yMaxDefault]));
+        yMin = Math.min(...y1.concat(y2));
+        yMax = Math.max(...y1.concat(y2));
     } else {
         xMin = Math.min(...x1);
         xMax = Math.max(...x1);
-        yMin = Math.min(...y1.concat([yMinDefault]));
-        yMax = Math.max(...y1.concat([yMaxDefault]));
+        yMin = Math.min(...y1);
+        yMax = Math.max(...y1);
     }
 
     const xAxisScale = d3.scaleLinear(
@@ -32,9 +32,11 @@
             [margin.left, width - margin.right],
         ),
         yAxisScale = d3.scaleLinear(
-            [yMin / 1000, yMax / 1000],
+            [yMin / 1000 - yPadding, yMax / 1000 + yPadding],
             [height - margin.bottom, margin.top],
         );
+
+    $: console.log(yAxisScale.ticks(4));
 
     const path = d3
         .line()
@@ -71,6 +73,49 @@
             bind:this={xAxis}
             transform="translate(0, {height - margin.bottom})"
         />
+
+        <line
+            x1={margin.left}
+            y1={margin.top}
+            x2={width - margin.right}
+            y2={margin.top}
+            stroke="black"
+        />
+        <line
+            x1={width - margin.right}
+            y1={margin.top}
+            x2={width - margin.right}
+            y2={height - margin.bottom}
+            stroke="black"
+        />
+
+        {#each xAxisScale.ticks() as tick}
+            <line
+                x1={xAxisScale(tick)}
+                x2={xAxisScale(tick)}
+                y1={margin.top}
+                y2={height - margin.bottom}
+                fill="none"
+                shape-rendering="crispEdges"
+                stroke="black"
+                stroke-width="1px"
+                opacity="0.2"
+            ></line>
+        {/each}
+
+        {#each yAxisScale.ticks() as tick}
+            <line
+                x1={margin.left}
+                x2={width - margin.right}
+                y1={yAxisScale(tick)}
+                y2={yAxisScale(tick)}
+                fill="none"
+                shape-rendering="crispEdges"
+                stroke="black"
+                stroke-width="1px"
+                opacity="0.2"
+            ></line>
+        {/each}
 
         <text
             x="50%"

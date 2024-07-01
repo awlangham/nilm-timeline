@@ -1,5 +1,4 @@
-export const yMinDefault = -200,
-    yMaxDefault = 200;
+export const yPadding = 0.25;
 
 export const margin = {
     'top': 50,
