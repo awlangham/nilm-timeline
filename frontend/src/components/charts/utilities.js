@@ -7,6 +7,3 @@ export const margin = {
     'left': 150,
     'right': 50
 };
-
-export const inConfig = { delay: 0 },
-    drawConfig = { duration: 750, delay: 0 };

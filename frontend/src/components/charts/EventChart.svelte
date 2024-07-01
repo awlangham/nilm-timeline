@@ -1,10 +1,9 @@
 <script>
     import * as d3 from "d3";
-    import { fade } from "svelte/transition";
     import Legend from "../visuals/Legend.svelte";
     import { onMount } from "svelte";
     import { exemplarColor } from "../../constants";
-    import { yMinDefault, yMaxDefault, margin, inConfig } from "./utilities";
+    import { yMinDefault, yMaxDefault, margin } from "./utilities";
 
     export let x1, y1, c1, x2, y2, yAxisLabel;
 
@@ -54,13 +53,7 @@
 </script>
 
 <svg {width} {height}>
-    <Legend
-        {c1}
-        {haveExemplar}
-        x={margin.left + 20}
-        y={margin.top + 20}
-        {inConfig}
-    />
+    <Legend {c1} {haveExemplar} x={margin.left + 20} y={margin.top + 20} />
 
     {#if haveExemplar}
         <path
@@ -72,16 +65,8 @@
     {/if}
     <path d={path(y1)} fill="none" stroke={c1} stroke-width="3px" />
 
-    <g
-        bind:this={yAxis}
-        transform="translate({margin.left}, 0)"
-        in:fade={inConfig}
-    />
-    <g
-        bind:this={xAxis}
-        transform="translate(0, {height - margin.bottom})"
-        in:fade={inConfig}
-    />
+    <g bind:this={yAxis} transform="translate({margin.left}, 0)" />
+    <g bind:this={xAxis} transform="translate(0, {height - margin.bottom})" />
 
     <text
         x="50%"
@@ -89,7 +74,6 @@
         text-anchor="middle"
         font-family="sans-serif"
         font-size="24px"
-        in:fade={inConfig}
     >
         Time (s)
     </text>
@@ -99,7 +83,6 @@
         text-anchor="middle"
         font-family="sans-serif"
         font-size="24px"
-        in:fade={inConfig}
     >
         {yAxisLabel}
     </text>

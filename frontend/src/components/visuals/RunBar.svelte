@@ -1,5 +1,4 @@
 <script>
-    import * as d3 from "d3";
     import { createEventDispatcher } from "svelte";
 
     export let start_x, end_x, y, height, fill, distance;
@@ -9,17 +8,18 @@
     const dispatch = createEventDispatcher();
 
     const runSelected = () => {
-        d3.select(bar)
-            .raise()
-            .transition()
-            .duration(400)
-            .attr("transform", "translate(0, 0)")
-            .attr("height", 1000)
-            .attr("width", 3000)
-            .attr("fill", "white")
-            .on("end", () => {
-                dispatch("select");
-            });
+        //     d3.select(bar)
+        //         .raise()
+        //         .transition()
+        //         .duration(400)
+        //         .attr("transform", "translate(0, 0)")
+        //         .attr("height", 1000)
+        //         .attr("width", 3000)
+        //         .attr("fill", "white")
+        //         .on("end", () => {
+        //             dispatch("select");
+        //         });
+        dispatch("select");
     };
 </script>
 

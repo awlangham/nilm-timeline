@@ -1,13 +1,12 @@
 <script>
-    import { fade } from "svelte/transition";
     import { exemplarColor } from "../../constants.js";
 
-    export let haveExemplar, c1, x, y, inConfig;
+    export let haveExemplar, c1, x, y;
 
     const radius = 10;
 </script>
 
-<g in:fade={inConfig}>
+<g>
     <circle cx={x + radius} cy={y + radius} r={radius} fill={c1} />
     <text
         x={x + 2 * radius + 10}

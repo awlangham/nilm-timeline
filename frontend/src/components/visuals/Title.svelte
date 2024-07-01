@@ -1,10 +1,8 @@
 <script>
-    import { fade } from "svelte/transition";
-
     export let x, y;
 </script>
 
-<text {x} {y} text-anchor="middle" out:fade>
+<text {x} {y} text-anchor="middle">
     <slot />
 </text>
 

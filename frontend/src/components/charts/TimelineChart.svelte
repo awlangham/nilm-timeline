@@ -1,6 +1,5 @@
 <script>
     import * as d3 from "d3";
-    import { fade } from "svelte/transition";
     import { onMount, createEventDispatcher } from "svelte";
     import RunBar from "../visuals/RunBar.svelte";
     import Title from "../visuals/Title.svelte";
@@ -203,19 +202,14 @@
         transform="translate({marginLeft}, {-loadAxisScale.step() / 2})"
     ></g>
 
-    <g bind:this={loadAxis} transform="translate({marginLeft}, 0)" out:fade />
-    <g
-        bind:this={timeAxis}
-        transform="translate(0, {height - marginBottom})"
-        out:fade
-    />
+    <g bind:this={loadAxis} transform="translate({marginLeft}, 0)" />
+    <g bind:this={timeAxis} transform="translate(0, {height - marginBottom})" />
     <line
         x1={marginLeft}
         y1={marginTop}
         x2={width - marginRight}
         y2={marginTop}
         stroke="black"
-        out:fade
     />
     <line
         x1={width - marginRight}
@@ -223,7 +217,6 @@
         x2={width - marginRight}
         y2={height - marginBottom}
         stroke="black"
-        out:fade
     />
 
     <Title x="50%" y={marginTop - 10}>
