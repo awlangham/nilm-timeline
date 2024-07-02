@@ -60,14 +60,11 @@ async def get_data(start_ts: int, end_ts: int):
 
 @app.get('/api/event/{start_ts}/{end_ts}')
 async def get_event(start_ts: int, end_ts: int):
-    print(start_ts, end_ts)
-
     node = get_node()
 
     # Get label
     events = await node.event_stream_read(app.dataset + '/events', start=start_ts, end=start_ts + 1)
     event_label = events[0].content['label']
-    print(event_label)
 
     # Get ON transient
     on_selected_data = await node.data_read_array(app.dataset + '/transients', flatten=True, start=start_ts, end=start_ts + 1e6)
@@ -96,7 +93,7 @@ async def get_event(start_ts: int, end_ts: int):
     # TODO: add metrics for off events
     metrics = {
         'num_runs_24h': len(last_24h_ons),
-        'avg_run_duration': np.mean(run_durations) / 1e6,
+        'avg_run_duration': np.mean(run_durations) / 1e6 if len(run_durations) > 0 else None,
         'distance_from_exemplar': trainola(on_selected_data.T[1:], on_exemplar_data.T[1:])
     }
 

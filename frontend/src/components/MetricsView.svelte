@@ -4,14 +4,20 @@
 
 <div class="metrics-container">
     <p>Number of runs in previous 24h: {metrics.num_runs_24h}</p>
+
     <p>
-        Average run duration in previous 24h: {Math.round(
-            metrics.avg_run_duration,
-        )} seconds
+        {#if metrics.avg_run_duration}
+            Average run duration in previous 24h: {Math.round(
+                metrics.avg_run_duration,
+            )} seconds
+        {:else}
+            No runs in previous 24h
+        {/if}
     </p>
     <p>
         Match score with exemplar: {(
-            100 * (1 - metrics.distance_from_exemplar)
+            100 *
+            (1 - metrics.distance_from_exemplar)
         ).toFixed(1)}%
     </p>
 </div>
