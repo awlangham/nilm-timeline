@@ -1,7 +1,5 @@
 <script>
-    import { exemplarColor } from "../../constants.js";
-
-    export let haveExemplar, c1, x, y;
+    export let c1, c2, x, y;
 
     const radius = 10;
 </script>
@@ -24,24 +22,17 @@
         y={y + 2 * radius}
         dominant-baseline="text-after-edge"
     >
-        Selected
+        Real
     </text>
 
-    {#if haveExemplar}
-        <circle
-            cx={x + radius}
-            cy={y + radius + 40}
-            r={radius}
-            fill={exemplarColor}
-        />
-        <text
-            x={x + 2 * radius + 10}
-            y={y + 2 * radius + 40}
-            dominant-baseline="text-after-edge"
-        >
-            Baseline
-        </text>
-    {/if}
+    <circle cx={x + radius} cy={y + radius + 40} r={radius} fill={c2} />
+    <text
+        x={x + 2 * radius + 10}
+        y={y + 2 * radius + 40}
+        dominant-baseline="text-after-edge"
+    >
+        Reactive
+    </text>
 </g>
 
 <style>

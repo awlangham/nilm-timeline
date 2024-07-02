@@ -2,15 +2,17 @@
     import * as d3 from "d3";
     import Legend from "../visuals/Legend.svelte";
     import { onMount } from "svelte";
-    import { exemplarColor } from "../../constants";
     import { yPadding, margin } from "./utilities";
 
-    export let x1, y1, c1, x2, y2, yAxisLabel;
+    export let x1, y1, x2, y2, yAxisLabel;
+
+    const colorScale = d3.scaleOrdinal(["P", "Q"], d3.schemeTableau10);
+    const c1 = colorScale('P'), c2 = colorScale('Q');
 
     let xAxis, yAxis;
 
-    const width = window.innerWidth * 0.48,
-        height = window.innerHeight * 0.8;
+    const width = window.innerWidth * 0.3,
+        height = window.innerHeight * 0.47;
 
     const haveExemplar = x2 && y2;
 
@@ -49,24 +51,17 @@
     onMount(() => {
         d3.select(xAxis)
             .call(d3.axisBottom(xAxisScale))
-            .style("font-size", "24px");
+            .style("font-size", "12px");
 
         d3.select(yAxis)
             .call(d3.axisLeft(yAxisScale))
-            .style("font-size", "24px");
+            .style("font-size", "12px");
     });
 </script>
 
 <div class="event-chart-container">
     <svg {width} {height}>
-        {#if haveExemplar}
-            <path
-                d={path2(y2)}
-                fill="none"
-                stroke={exemplarColor}
-                stroke-width="3px"
-            />
-        {/if}
+        <path d={path2(y2)} fill="none" stroke={c2} stroke-width="3px" />
         <path d={path1(y1)} fill="none" stroke={c1} stroke-width="3px" />
 
         <g bind:this={yAxis} transform="translate({margin.left}, 0)" />
@@ -137,7 +132,7 @@
             {yAxisLabel}
         </text>
 
-        <Legend {c1} {haveExemplar} x={margin.left + 20} y={margin.top + 20} />
+        <Legend {c1} {c2} x={margin.left + 20} y={margin.top + 20} />
     </svg>
 </div>
 
@@ -146,6 +141,7 @@
         width: 48%;
         margin-left: auto;
         margin-right: auto;
+        margin-bottom: 10px;
         border: 2px solid gray;
         border-radius: 10px;
         box-shadow: 3px 1px 4px #888;

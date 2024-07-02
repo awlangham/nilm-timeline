@@ -15,8 +15,6 @@
         exemplar_Q,
         metrics;
 
-    const colorScale = d3.scaleOrdinal(["P", "Q"], d3.schemeTableau10);
-
     $: if (selectedTimestamp != -1) {
         transientPromise = fetch("api/event/" + selectedTimestamp)
             .then((response) => response.json())
@@ -50,22 +48,36 @@
         <EventChart
             x1={transient_timestamps}
             y1={transient_P}
-            c1={colorScale("P")}
-            x2={exemplar_timestamps}
-            y2={exemplar_P}
-            yAxisLabel="Active Power (kW)"
+            x2={transient_timestamps}
+            y2={transient_Q}
+            yAxisLabel="Selected ON"
         />
 
         <EventChart
-            x1={transient_timestamps}
-            y1={transient_Q}
-            c1={colorScale("Q")}
+            x1={[]}
+            y1={[]}
+            x2={[]}
+            y2={[]}
+            yAxisLabel="Selected OFF"
+        />
+
+        <EventChart
+            x1={exemplar_timestamps}
+            y1={exemplar_P}
             x2={exemplar_timestamps}
             y2={exemplar_Q}
+            yAxisLabel="Exemplar ON"
+        />
+
+        <EventChart
+            x1={[]}
+            y1={[]}
+            x2={[]}
+            y2={[]}
             yAxisLabel="Reactive Power (kVar)"
         />
 
-        <MetricsView {metrics} />
+        <!-- <MetricsView {metrics} /> -->
     {/await}
 </div>
 
@@ -81,6 +93,7 @@
     .event-view-container {
         display: flex;
         flex-wrap: wrap;
+        width: 60%;
         margin-top: 10px;
     }
 </style>

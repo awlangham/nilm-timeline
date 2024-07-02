@@ -1,8 +1,8 @@
 export const yPadding = 0.25;
 
 export const margin = {
-    'top': 50,
+    'top': 20,
     'bottom': 75,
-    'left': 150,
+    'left': 110,
     'right': 50
 };
