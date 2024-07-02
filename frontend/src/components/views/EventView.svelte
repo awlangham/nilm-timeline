@@ -56,6 +56,7 @@
                 {yMin}
                 {yMax}
                 yAxisLabel="Selected ON"
+                showLegend={true}
             />
             <EventChart
                 data={offTransient}

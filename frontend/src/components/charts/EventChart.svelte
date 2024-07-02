@@ -4,7 +4,11 @@
     import { onMount } from "svelte";
     import { yPadding, margin } from "./utilities";
 
-    export let data, yMin, yMax, yAxisLabel;
+    export let data,
+        yMin,
+        yMax,
+        yAxisLabel,
+        showLegend = false;
 
     $: x = data["timestamps"];
     $: y1 = data["P"];
@@ -125,7 +129,9 @@
             {yAxisLabel}
         </text>
 
-        <Legend {c1} {c2} x={margin.left + 20} y={margin.top + 20} />
+        {#if showLegend}
+            <Legend {c1} {c2} x={margin.left + 20} y={margin.top + 20} />
+        {/if}
     </svg>
 </div>
 

@@ -8,7 +8,7 @@
     <rect
         x={x - 5}
         y={y - 5}
-        width="110px"
+        width="60px"
         height="70px"
         fill="white"
         stroke="black"
@@ -22,7 +22,7 @@
         y={y + 2 * radius}
         dominant-baseline="text-after-edge"
     >
-        Real
+        P
     </text>
 
     <circle cx={x + radius} cy={y + radius + 40} r={radius} fill={c2} />
@@ -31,7 +31,7 @@
         y={y + 2 * radius + 40}
         dominant-baseline="text-after-edge"
     >
-        Reactive
+        Q
     </text>
 </g>
 

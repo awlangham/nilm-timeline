@@ -19,7 +19,7 @@ async def get_range():
     await node.close()
 
     return {
-        'range_start': event_info.end - 24 * 60 * 60e6,
+        'range_start': event_info.end - 6 * 60 * 60e6,  # 6 hours
         'range_end': event_info.end
     }
 
@@ -48,7 +48,7 @@ async def get_data(start_ts: int, end_ts: int):
             except:
                 continue
 
-            interval = Interval(load_name, start_time, event.start_time)
+            interval = Interval(load_name, start_time, event.end_time)
             intervals.append(interval.to_dict())
             del start_times[load_name]
 
@@ -71,7 +71,7 @@ async def get_event(start_ts: int, end_ts: int):
     on_transient = Transient(on_selected_data)
 
     # Get OFF transient
-    off_selected_data = await node.data_read_array(app.dataset + '/transients', flatten=True, start=end_ts, end=end_ts + 1e6)
+    off_selected_data = await node.data_read_array(app.dataset + '/transients', flatten=True, start=end_ts - 1e6, end=end_ts)
     off_transient = Transient(off_selected_data, is_on=False)
 
     # Get ON exemplar
