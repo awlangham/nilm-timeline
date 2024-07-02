@@ -4,7 +4,7 @@
     import { fade } from "svelte/transition";
 
     let selectedInterval = [];
-    const fadeConfig = { duration: 250 };
+    const fadeConfig = { duration: 300 };
 </script>
 
 <div class="main">

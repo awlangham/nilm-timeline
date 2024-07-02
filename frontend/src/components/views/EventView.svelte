@@ -49,39 +49,33 @@
     Back
 </button>
 
-{#await transientPromise then}
-    <div class="event-view-container">
-        <div class="event-charts-container">
-            <EventChart
-                data={onTransient}
-                {yMin}
-                {yMax}
-                yAxisLabel="Selected ON"
-                showLegend={true}
-            />
-            <EventChart
-                data={offTransient}
-                {yMin}
-                {yMax}
-                yAxisLabel="Selected OFF"
-            />
-            <EventChart
-                data={onExemplar}
-                {yMin}
-                {yMax}
-                yAxisLabel="Exemplar ON"
-            />
-            <EventChart
-                data={offExemplar}
-                {yMin}
-                {yMax}
-                yAxisLabel="Exemplar OFF"
-            />
-        </div>
-
-        <MetricsView {loadName} {metrics} />
+<div class="event-view-container">
+    <div class="event-charts-container">
+        <EventChart
+            data={onTransient}
+            {yMin}
+            {yMax}
+            yAxisLabel="Selected ON"
+            showLegend={true}
+        />
+        <EventChart
+            data={offTransient}
+            {yMin}
+            {yMax}
+            yAxisLabel="Selected OFF"
+        />
+        <EventChart data={onExemplar} {yMin} {yMax} yAxisLabel="Exemplar ON" />
+        <EventChart
+            data={offExemplar}
+            {yMin}
+            {yMax}
+            yAxisLabel="Exemplar OFF"
+        />
     </div>
-{/await}
+    {#await transientPromise then}
+        <MetricsView {loadName} {metrics} />
+    {/await}
+</div>
 
 <style>
     #back-btn {

@@ -1,10 +1,10 @@
 <script>
     import * as d3 from "d3";
     import Legend from "../visuals/Legend.svelte";
-    import { onMount } from "svelte";
     import { yPadding, margin } from "./utilities";
+    import { draw, fade } from "svelte/transition";
 
-    export let data,
+    export let data = { timestamps: [], P: [], Q: [] },
         yMin,
         yMax,
         yAxisLabel,
@@ -45,7 +45,7 @@
         .x((d, idx) => xAxisScale(x[idx]))
         .y((d) => yAxisScale(d / 1000));
 
-    onMount(() => {
+    $: {
         d3.select(xAxis)
             .call(d3.axisBottom(xAxisScale))
             .style("font-size", "12px");
@@ -53,13 +53,27 @@
         d3.select(yAxis)
             .call(d3.axisLeft(yAxisScale))
             .style("font-size", "12px");
-    });
+    }
 </script>
 
 <div class="event-chart-container">
     <svg {width} {height}>
-        <path d={path2(y2)} fill="none" stroke={c2} stroke-width="3px" />
-        <path d={path1(y1)} fill="none" stroke={c1} stroke-width="3px" />
+        {#key data}
+            <path
+                d={path2(y2)}
+                fill="none"
+                stroke={c2}
+                stroke-width="3px"
+                in:draw
+            />
+            <path
+                d={path1(y1)}
+                fill="none"
+                stroke={c1}
+                stroke-width="3px"
+                in:draw
+            />
+        {/key}
 
         <g bind:this={yAxis} transform="translate({margin.left}, 0)" />
         <g
@@ -93,7 +107,8 @@
                 stroke="black"
                 stroke-width="1px"
                 opacity="0.2"
-            ></line>
+                in:fade
+            />
         {/each}
 
         {#each yAxisScale.ticks() as tick}
@@ -107,7 +122,8 @@
                 stroke="black"
                 stroke-width="1px"
                 opacity="0.2"
-            ></line>
+                in:fade
+            />
         {/each}
 
         <text

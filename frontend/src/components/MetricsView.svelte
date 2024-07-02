@@ -1,10 +1,11 @@
 <script>
+    import { fade } from "svelte/transition";
     import { formatSeconds } from "./charts/utilities";
 
     export let loadName, metrics;
 </script>
 
-<div class="metrics-container">
+<div class="metrics-container" in:fade>
     <h1>{loadName}</h1>
 
     <p>Number of runs in previous 24h: {metrics.num_runs_24h}</p>
