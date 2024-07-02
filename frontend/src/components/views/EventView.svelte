@@ -6,7 +6,7 @@
 
     let transientPromise;
 
-    let onTransient, offTransient, onExemplar, offExemplar, metrics;
+    let onTransient, offTransient, onExemplar, offExemplar, loadName, metrics;
 
     let allData = [];
     $: if (onTransient && offTransient && onExemplar && offExemplar) {
@@ -35,6 +35,7 @@
             onExemplar = j.on_exemplar;
             offExemplar = j.off_exemplar;
 
+            loadName = j.load_name;
             metrics = j.metrics;
         });
 </script>
@@ -78,7 +79,7 @@
             />
         </div>
 
-        <MetricsView {metrics} />
+        <MetricsView {loadName} {metrics} />
     </div>
 {/await}
 

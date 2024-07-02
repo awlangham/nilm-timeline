@@ -102,6 +102,7 @@ async def get_event(start_ts: int, end_ts: int):
         'off_transient': off_transient.to_dict(),
         'on_exemplar': on_exemplar.to_dict(),
         'off_exemplar': off_exemplar.to_dict(),
+        'load_name': event_label,
         'metrics': metrics
     }
 

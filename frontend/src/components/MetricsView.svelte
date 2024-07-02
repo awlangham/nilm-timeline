@@ -1,15 +1,17 @@
 <script>
-    export let metrics;
+    import { formatSeconds } from "./charts/utilities";
+
+    export let loadName, metrics;
 </script>
 
 <div class="metrics-container">
+    <h1>{loadName}</h1>
+
     <p>Number of runs in previous 24h: {metrics.num_runs_24h}</p>
 
     <p>
         {#if metrics.avg_run_duration}
-            Average run duration in previous 24h: {Math.round(
-                metrics.avg_run_duration,
-            )} seconds
+            Average run duration in previous 24h: {formatSeconds(metrics.avg_run_duration)}
         {:else}
             No runs in previous 24h
         {/if}
