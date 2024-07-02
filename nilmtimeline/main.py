@@ -90,11 +90,11 @@ async def get_event(start_ts: int, end_ts: int):
     last_24h_ons = [event for event in last_24h_events if event.content['type'] == 'OFF to ON']
     run_durations = [interval['end_ts'] - interval['start_ts'] for interval in find_intervals(last_24h_events)]
 
-    # TODO: add metrics for off events
     metrics = {
         'num_runs_24h': len(last_24h_ons),
         'avg_run_duration': np.mean(run_durations) / 1e6 if len(run_durations) > 0 else None,
-        'distance_from_exemplar': trainola(on_selected_data.T[1:], on_exemplar_data.T[1:])
+        'on_distance': trainola(on_selected_data.T[1:], on_exemplar_data.T[1:]),
+        'off_distance': trainola(off_selected_data.T[1:], off_exemplar_data.T[1:])
     }
 
     return {

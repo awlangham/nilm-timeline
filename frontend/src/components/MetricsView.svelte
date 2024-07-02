@@ -17,9 +17,16 @@
         {/if}
     </p>
     <p>
-        Match score with exemplar: {(
+        ON match score: {(
             100 *
-            (1 - metrics.distance_from_exemplar)
+            (1 - metrics.on_distance)
+        ).toFixed(1)}%
+    </p>
+
+    <p>
+        OFF match score: {(
+            100 *
+            (1 - metrics.off_distance)
         ).toFixed(1)}%
     </p>
 </div>
