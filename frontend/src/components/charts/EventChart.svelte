@@ -4,48 +4,43 @@
     import { onMount } from "svelte";
     import { yPadding, margin } from "./utilities";
 
-    export let x1, y1, x2, y2, yAxisLabel;
+    export let data, yAxisLabel;
+
+    $: x = data["timestamps"];
+    $: y1 = data["P"];
+    $: y2 = data["Q"];
 
     const colorScale = d3.scaleOrdinal(["P", "Q"], d3.schemeTableau10);
-    const c1 = colorScale('P'), c2 = colorScale('Q');
+    const c1 = colorScale("P"),
+        c2 = colorScale("Q");
 
     let xAxis, yAxis;
 
     const width = window.innerWidth * 0.3,
         height = window.innerHeight * 0.47;
 
-    const haveExemplar = x2 && y2;
+    $: xMin = Math.min(...x);
+    $: xMax = Math.max(...x);
+    $: yMin = Math.min(...y1.concat(y2));
+    $: yMax = Math.max(...y1.concat(y2));
 
-    let xMin, xMax, yMin, yMax;
-    if (haveExemplar) {
-        xMin = Math.min(...x1.concat(x2));
-        xMax = Math.max(...x1.concat(x2));
-        yMin = Math.min(...y1.concat(y2));
-        yMax = Math.max(...y1.concat(y2));
-    } else {
-        xMin = Math.min(...x1);
-        xMax = Math.max(...x1);
-        yMin = Math.min(...y1);
-        yMax = Math.max(...y1);
-    }
+    $: xAxisScale = d3.scaleLinear(
+        [xMin, xMax],
+        [margin.left, width - margin.right],
+    );
+    $: yAxisScale = d3.scaleLinear(
+        [yMin / 1000 - yPadding, yMax / 1000 + yPadding],
+        [height - margin.bottom, margin.top],
+    );
 
-    const xAxisScale = d3.scaleLinear(
-            [xMin, xMax],
-            [margin.left, width - margin.right],
-        ),
-        yAxisScale = d3.scaleLinear(
-            [yMin / 1000 - yPadding, yMax / 1000 + yPadding],
-            [height - margin.bottom, margin.top],
-        );
-
-    const path1 = d3
+    $: path1 = d3
         .line()
-        .x((d, idx) => xAxisScale(x1[idx]))
+        .x((d, idx) => xAxisScale(x[idx]))
         .y((d) => yAxisScale(d / 1000));
 
-    const path2 = d3
+    $: path2 = d3
         .line()
-        .x((d, idx) => xAxisScale(x2[idx]))
+        .x((d, idx) => xAxisScale(x[idx]))
         .y((d) => yAxisScale(d / 1000));
 
     onMount(() => {

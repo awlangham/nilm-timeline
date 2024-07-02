@@ -3,18 +3,18 @@
     import TimelineView from "./views/TimelineView.svelte";
     import { fade } from "svelte/transition";
 
-    let selectedTimestamp = -1;
+    let selectedInterval = [];
     const fadeConfig = { duration: 250 };
 </script>
 
 <div class="main">
-    {#if selectedTimestamp === -1}
+    {#if selectedInterval.length === 0}
         <div transition:fade={fadeConfig}>
-            <TimelineView bind:selectedTimestamp />
+            <TimelineView bind:selectedInterval />
         </div>
     {:else}
         <div transition:fade={fadeConfig}>
-            <EventView bind:selectedTimestamp />
+            <EventView bind:selectedInterval />
         </div>
     {/if}
 </div>

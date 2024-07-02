@@ -48,7 +48,7 @@ async def get_data(start_ts: int, end_ts: int):
             except:
                 continue
 
-            interval = Interval(load_name, start_time, event.end_time)
+            interval = Interval(load_name, start_time, event.start_time)
             intervals.append(interval.to_dict())
             del start_times[load_name]
 
@@ -58,41 +58,68 @@ async def get_data(start_ts: int, end_ts: int):
     }
 
 
-@app.get('/api/event/{timestamp}')
-async def get_event(timestamp: int):
+@app.get('/api/event/{start_ts}/{end_ts}')
+async def get_event(start_ts: int, end_ts: int):
+    print(start_ts, end_ts)
+
     node = get_node()
-    data = await node.data_read_array(app.dataset + '/transients', flatten=True, start=timestamp, end=timestamp + 1e6)
 
-    event_timestamps = data[:, 0] - data[0, 0]
-    event_timestamps = event_timestamps / 1e6
-    event_P = data[:, 1] - np.mean(data[:5, 1])
-    event_Q = data[:, 2] - np.mean(data[:5, 2])
-
-    events = await node.event_stream_read(app.dataset + '/events', start=timestamp, end=timestamp + 1)
+    # Get label
+    events = await node.event_stream_read(app.dataset + '/events', start=start_ts, end=start_ts + 1)
     event_label = events[0].content['label']
+    print(event_label)
 
-    off_on_exemplar = await load_exemplar(event_label, 'OFF', 'ON')
-    exemplar_timestamps = off_on_exemplar[:, 0] - off_on_exemplar[0, 0]
-    exemplar_timestamps = exemplar_timestamps / 1e6
-    exemplar_P = off_on_exemplar[:, 1] - np.mean(off_on_exemplar[:5, 1])
-    exemplar_Q = off_on_exemplar[:, 2] - np.mean(off_on_exemplar[:5, 2])
+    # Get ON transient
+    on_selected_data = await node.data_read_array(app.dataset + '/transients', flatten=True, start=start_ts, end=start_ts + 1e6)
+    on_transient = Transient(on_selected_data)
+
+    # Get OFF transient
+    off_selected_data = await node.data_read_array(app.dataset + '/transients', flatten=True, start=end_ts, end=end_ts + 1e6)
+    off_transient = Transient(off_selected_data, is_on=False)
+
+    # Get ON exemplar
+    on_exemplar_data = await load_exemplar(event_label, 'OFF', 'ON')
+    on_exemplar = Transient(on_exemplar_data)
+
+    # Get OFF exemplar
+    off_exemplar_data = await load_exemplar(event_label, 'ON', 'OFF')
+    off_exemplar = Transient(off_exemplar_data, is_on=False)
 
     json_filter = json.dumps([[['label', 'is', event_label]]])
-    last_24h_events = await node.event_stream_read(app.dataset + '/events', start=timestamp - 24 * 60 * 60e6, end=timestamp, json_filter=json_filter)
+    last_24h_events = await node.event_stream_read(app.dataset + '/events', start=start_ts - 24 * 60 * 60e6, end=start_ts, json_filter=json_filter)
 
     await node.close()
 
     last_24h_ons = [event for event in last_24h_events if event.content['type'] == 'OFF to ON']
     run_durations = [interval['end_ts'] - interval['start_ts'] for interval in find_intervals(last_24h_events)]
 
+    # TODO: add metrics for off events
     metrics = {
         'num_runs_24h': len(last_24h_ons),
         'avg_run_duration': np.mean(run_durations) / 1e6,
-        'distance_from_exemplar': trainola(data.T, off_on_exemplar.T)
+        'distance_from_exemplar': trainola(on_selected_data.T[1:], on_exemplar_data.T[1:])
     }
 
     return {
-        'transient': {'timestamps': event_timestamps.tolist(), 'P': event_P.tolist(), 'Q': event_Q.tolist()},
-        'exemplar': {'timestamps': exemplar_timestamps.tolist(), 'P': exemplar_P.tolist(), 'Q': exemplar_Q.tolist()},
+        'on_transient': on_transient.to_dict(),
+        'off_transient': off_transient.to_dict(),
+        'on_exemplar': on_exemplar.to_dict(),
+        'off_exemplar': off_exemplar.to_dict(),
         'metrics': metrics
     }
+
+
+class Transient:
+    def __init__(self, data, is_on=True) -> None:
+        self.timestamps = data[:, 0] - data[0, 0]
+        self.timestamps = self.timestamps / 1e6
+
+        if is_on:
+            self.P = data[:, 1] - np.mean(data[:5, 1])
+            self.Q = data[:, 2] - np.mean(data[:5, 2])
+        else:
+            self.P = data[:, 1] - np.mean(data[-5:, 1])
+            self.Q = data[:, 2] - np.mean(data[-5:, 2])
+
+    def to_dict(self) -> str:
+        return {'timestamps': self.timestamps.tolist(), 'P': self.P.tolist(), 'Q': self.Q.tolist()}

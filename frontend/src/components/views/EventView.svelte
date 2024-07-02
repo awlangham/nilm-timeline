@@ -1,85 +1,49 @@
 <script>
-    import * as d3 from "d3";
     import EventChart from "../charts/EventChart.svelte";
     import MetricsView from "../MetricsView.svelte";
 
-    export let selectedTimestamp;
+    export let selectedInterval;
 
     let transientPromise;
 
-    let transient_timestamps,
-        transient_P,
-        transient_Q,
-        exemplar_timestamps,
-        exemplar_P,
-        exemplar_Q,
-        metrics;
+    let onTransient, offTransient, onExemplar, offExemplar, metrics;
 
-    $: if (selectedTimestamp != -1) {
-        transientPromise = fetch("api/event/" + selectedTimestamp)
-            .then((response) => response.json())
-            .then((j) => {
-                transient_timestamps = j.transient.timestamps;
-                transient_P = j.transient.P;
-                transient_Q = j.transient.Q;
+    transientPromise = fetch(
+        "api/event/" + selectedInterval[0] + "/" + selectedInterval[1],
+    )
+        .then((response) => response.json())
+        .then((j) => {
+            onTransient = j.on_transient;
+            offTransient = j.off_transient;
 
-                if (j.exemplar) {
-                    exemplar_timestamps = j.exemplar.timestamps;
-                    exemplar_P = j.exemplar.P;
-                    exemplar_Q = j.exemplar.Q;
-                }
+            onExemplar = j.on_exemplar;
+            offExemplar = j.off_exemplar;
 
-                metrics = j.metrics;
-            });
-    }
+            metrics = j.metrics;
+        });
 </script>
 
 <button
     id="back-btn"
     on:click={() => {
-        selectedTimestamp = -1;
+        selectedInterval = [];
     }}
 >
     Back
 </button>
 
-<div class="event-view-container">
-    {#await transientPromise then}
-        <EventChart
-            x1={transient_timestamps}
-            y1={transient_P}
-            x2={transient_timestamps}
-            y2={transient_Q}
-            yAxisLabel="Selected ON"
-        />
+{#await transientPromise then}
+    <div class="event-view-container">
+        <div class="event-charts-container">
+            <EventChart data={onTransient} yAxisLabel="Selected ON" />
+            <EventChart data={offTransient} yAxisLabel="Selected OFF" />
+            <EventChart data={onExemplar} yAxisLabel="Exemplar ON" />
+            <EventChart data={offExemplar} yAxisLabel="Exemplar OFF" />
+        </div>
 
-        <EventChart
-            x1={[]}
-            y1={[]}
-            x2={[]}
-            y2={[]}
-            yAxisLabel="Selected OFF"
-        />
-
-        <EventChart
-            x1={exemplar_timestamps}
-            y1={exemplar_P}
-            x2={exemplar_timestamps}
-            y2={exemplar_Q}
-            yAxisLabel="Exemplar ON"
-        />
-
-        <EventChart
-            x1={[]}
-            y1={[]}
-            x2={[]}
-            y2={[]}
-            yAxisLabel="Reactive Power (kVar)"
-        />
-
-        <!-- <MetricsView {metrics} /> -->
-    {/await}
-</div>
+        <MetricsView {metrics} />
+    </div>
+{/await}
 
 <style>
     #back-btn {
@@ -91,6 +55,10 @@
     }
 
     .event-view-container {
+        display: flex;
+    }
+
+    .event-charts-container {
         display: flex;
         flex-wrap: wrap;
         width: 60%;

@@ -5,7 +5,7 @@
     import Title from "../visuals/Title.svelte";
     import { multiFormat } from "./formatTime";
 
-    export let selectedTimestamp,
+    export let selectedInterval,
         start_ts,
         end_ts,
         loadData = [],
@@ -191,7 +191,7 @@
                 height={(loadAxisScale.bandwidth() * d.num_on) / d.max_on}
                 distance={d.distance}
                 on:select={() => {
-                    selectedTimestamp = d.start_ts;
+                    selectedInterval = [d.start_ts, d.end_ts];
                 }}
             />
         {/each}

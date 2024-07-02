@@ -11,7 +11,7 @@
     </p>
     <p>
         Match score with exemplar: {(
-            100 * metrics.distance_from_exemplar
+            100 * (1 - metrics.distance_from_exemplar)
         ).toFixed(1)}%
     </p>
 </div>
@@ -19,8 +19,9 @@
 <style>
     .metrics-container {
         text-align: center;
-        width: 40%;
+        width: 30%;
         margin-top: 10px;
+        margin-bottom: 10px;
         margin-left: auto;
         margin-right: auto;
         border: 2px solid gray;
