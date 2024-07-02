@@ -62,6 +62,7 @@
             data={offTransient}
             {yMin}
             {yMax}
+            off={true}
             yAxisLabel="Selected OFF"
         />
         <EventChart data={onExemplar} {yMin} {yMax} yAxisLabel="Exemplar ON" />
@@ -69,6 +70,7 @@
             data={offExemplar}
             {yMin}
             {yMax}
+            off={true}
             yAxisLabel="Exemplar OFF"
         />
     </div>

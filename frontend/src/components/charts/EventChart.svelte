@@ -3,12 +3,18 @@
     import Legend from "../visuals/Legend.svelte";
     import { yPadding, margin } from "./utilities";
     import { draw, fade } from "svelte/transition";
+    import { quadIn, quadOut } from "svelte/easing";
 
     export let data = { timestamps: [], P: [], Q: [] },
         yMin,
         yMax,
         yAxisLabel,
+        off = false,
         showLegend = false;
+
+    const drawDuration = 500;
+    const drawDelay = off ? drawDuration : 0;
+    const drawEasing = off ? quadOut : quadIn;
 
     $: x = data["timestamps"];
     $: y1 = data["P"];
@@ -64,14 +70,14 @@
                 fill="none"
                 stroke={c2}
                 stroke-width="3px"
-                in:draw
+                in:draw={{ duration: drawDuration, delay: drawDelay, easing: drawEasing}}
             />
             <path
                 d={path1(y1)}
                 fill="none"
                 stroke={c1}
                 stroke-width="3px"
-                in:draw
+                in:draw={{ duration: drawDuration, delay: drawDelay, easing: drawEasing}}
             />
         {/key}
 
