@@ -4,7 +4,7 @@
     import { onMount } from "svelte";
     import { yPadding, margin } from "./utilities";
 
-    export let data, yAxisLabel;
+    export let data, yMin, yMax, yAxisLabel;
 
     $: x = data["timestamps"];
     $: y1 = data["P"];
@@ -21,8 +21,6 @@
 
     $: xMin = Math.min(...x);
     $: xMax = Math.max(...x);
-    $: yMin = Math.min(...y1.concat(y2));
-    $: yMax = Math.max(...y1.concat(y2));
 
     $: xAxisScale = d3.scaleLinear(
         [xMin, xMax],

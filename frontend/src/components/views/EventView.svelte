@@ -8,6 +8,22 @@
 
     let onTransient, offTransient, onExemplar, offExemplar, metrics;
 
+    let allData = [];
+    $: if (onTransient && offTransient && onExemplar && offExemplar) {
+        allData = onTransient["P"].concat(
+            onTransient["Q"],
+            offTransient["P"],
+            offTransient["Q"],
+            onExemplar["P"],
+            onExemplar["Q"],
+            offExemplar["P"],
+            offExemplar["Q"],
+        );
+    }
+
+    $: yMin = Math.min(...allData);
+    $: yMax = Math.max(...allData);
+
     transientPromise = fetch(
         "api/event/" + selectedInterval[0] + "/" + selectedInterval[1],
     )
@@ -35,10 +51,30 @@
 {#await transientPromise then}
     <div class="event-view-container">
         <div class="event-charts-container">
-            <EventChart data={onTransient} yAxisLabel="Selected ON" />
-            <EventChart data={offTransient} yAxisLabel="Selected OFF" />
-            <EventChart data={onExemplar} yAxisLabel="Exemplar ON" />
-            <EventChart data={offExemplar} yAxisLabel="Exemplar OFF" />
+            <EventChart
+                data={onTransient}
+                {yMin}
+                {yMax}
+                yAxisLabel="Selected ON"
+            />
+            <EventChart
+                data={offTransient}
+                {yMin}
+                {yMax}
+                yAxisLabel="Selected OFF"
+            />
+            <EventChart
+                data={onExemplar}
+                {yMin}
+                {yMax}
+                yAxisLabel="Exemplar ON"
+            />
+            <EventChart
+                data={offExemplar}
+                {yMin}
+                {yMax}
+                yAxisLabel="Exemplar OFF"
+            />
         </div>
 
         <MetricsView {metrics} />
