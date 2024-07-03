@@ -4,6 +4,7 @@
     import RunBar from "../visuals/RunBar.svelte";
     import Title from "../visuals/Title.svelte";
     import { multiFormat } from "./formatTime";
+    import { timelineChartMargin } from "./utilities";
 
     export let selectedInterval,
         start_ts,
@@ -38,19 +39,14 @@
         }
     };
 
-    const marginTop = 50,
-        marginBottom = 75,
-        marginLeft = 300,
-        marginRight = 50,
-        width = window.innerWidth,
-        height = window.innerHeight;
-
-    const initialStartTime = start_ts,
+    const width = window.innerWidth,
+        height = window.innerHeight,
+        initialStartTime = start_ts,
         initialEndTime = end_ts;
 
     let timeAxisScale = d3.scaleTime(
         [initialStartTime, initialEndTime],
-        [marginLeft, width - marginRight],
+        [timelineChartMargin.left, width - timelineChartMargin.right],
     );
     const origTimeAxisScale = timeAxisScale.copy();
 
@@ -66,7 +62,10 @@
     });
 
     $: loadAxisScale = d3
-        .scaleBand(loadNames, [marginTop, height - marginBottom])
+        .scaleBand(loadNames, [
+            timelineChartMargin.top,
+            height - timelineChartMargin.bottom,
+        ])
         .padding(0.1);
     $: colorScale = d3.scaleOrdinal(loadNames, d3.schemeTableau10);
     $: startTime = timeAxisScale.domain()[0];
@@ -122,7 +121,11 @@
             .duration(zoomTransitionDuration)
             .call(
                 zoom.translateBy,
-                (0.3 * (width - marginLeft - marginRight)) / k,
+                (0.3 *
+                    (width -
+                        timelineChartMargin.left -
+                        timelineChartMargin.right)) /
+                    k,
                 0,
             );
     };
@@ -134,7 +137,12 @@
             .duration(zoomTransitionDuration)
             .call(
                 zoom.translateBy,
-                -(0.3 * (width - marginLeft - marginRight)) / k,
+                -(
+                    0.3 *
+                    (width -
+                        timelineChartMargin.left -
+                        timelineChartMargin.right)
+                ) / k,
                 0,
             );
     };
@@ -167,7 +175,13 @@
             .call(
                 d3
                     .axisLeft(loadAxisScale)
-                    .tickSize(-(width - marginLeft - marginRight))
+                    .tickSize(
+                        -(
+                            width -
+                            timelineChartMargin.left -
+                            timelineChartMargin.right
+                        ),
+                    )
                     .tickFormat("")
                     .tickSizeOuter(0),
             )
@@ -196,10 +210,14 @@
     <defs>
         <clipPath id="clip-path">
             <rect
-                x={marginLeft}
-                y={marginTop}
-                width={width - marginRight - marginLeft}
-                height={height - marginBottom - marginTop}
+                x={timelineChartMargin.left}
+                y={timelineChartMargin.top}
+                width={width -
+                    timelineChartMargin.right -
+                    timelineChartMargin.left}
+                height={height -
+                    timelineChartMargin.bottom -
+                    timelineChartMargin.top}
             />
         </clipPath>
     </defs>
@@ -222,27 +240,34 @@
 
     <g
         bind:this={loadAxisGrid}
-        transform="translate({marginLeft}, {-loadAxisScale.step() / 2})"
+        transform="translate({timelineChartMargin.left}, {-loadAxisScale.step() /
+            2})"
     ></g>
 
-    <g bind:this={loadAxis} transform="translate({marginLeft}, 0)" />
-    <g bind:this={timeAxis} transform="translate(0, {height - marginBottom})" />
+    <g
+        bind:this={loadAxis}
+        transform="translate({timelineChartMargin.left}, 0)"
+    />
+    <g
+        bind:this={timeAxis}
+        transform="translate(0, {height - timelineChartMargin.bottom})"
+    />
     <line
-        x1={marginLeft}
-        y1={marginTop}
-        x2={width - marginRight}
-        y2={marginTop}
+        x1={timelineChartMargin.left}
+        y1={timelineChartMargin.top}
+        x2={width - timelineChartMargin.right}
+        y2={timelineChartMargin.top}
         stroke="black"
     />
     <line
-        x1={width - marginRight}
-        y1={marginTop}
-        x2={width - marginRight}
-        y2={height - marginBottom}
+        x1={width - timelineChartMargin.right}
+        y1={timelineChartMargin.top}
+        x2={width - timelineChartMargin.right}
+        y2={height - timelineChartMargin.bottom}
         stroke="black"
     />
 
-    <Title x="50%" y={marginTop - 10}>
+    <Title x="50%" y={timelineChartMargin.top - 10}>
         {startTime.toLocaleString(undefined, { hour12: false })}
         to
         {endTime.toLocaleString(undefined, { hour12: false })}

@@ -1,7 +1,7 @@
 <script>
     import * as d3 from "d3";
     import Legend from "../visuals/Legend.svelte";
-    import { yPadding, margin } from "./utilities";
+    import { yPadding, eventChartMargin } from "./utilities";
     import { draw, fade } from "svelte/transition";
     import { quadIn, quadOut } from "svelte/easing";
 
@@ -34,11 +34,11 @@
 
     $: xAxisScale = d3.scaleLinear(
         [xMin, xMax],
-        [margin.left, width - margin.right],
+        [eventChartMargin.left, width - eventChartMargin.right],
     );
     $: yAxisScale = d3.scaleLinear(
         [yMin / 1000 - yPadding, yMax / 1000 + yPadding],
-        [height - margin.bottom, margin.top],
+        [height - eventChartMargin.bottom, eventChartMargin.top],
     );
 
     $: path1 = d3
@@ -81,24 +81,24 @@
             />
         {/key}
 
-        <g bind:this={yAxis} transform="translate({margin.left}, 0)" />
+        <g bind:this={yAxis} transform="translate({eventChartMargin.left}, 0)" />
         <g
             bind:this={xAxis}
-            transform="translate(0, {height - margin.bottom})"
+            transform="translate(0, {height - eventChartMargin.bottom})"
         />
 
         <line
-            x1={margin.left}
-            y1={margin.top}
-            x2={width - margin.right}
-            y2={margin.top}
+            x1={eventChartMargin.left}
+            y1={eventChartMargin.top}
+            x2={width - eventChartMargin.right}
+            y2={eventChartMargin.top}
             stroke="black"
         />
         <line
-            x1={width - margin.right}
-            y1={margin.top}
-            x2={width - margin.right}
-            y2={height - margin.bottom}
+            x1={width - eventChartMargin.right}
+            y1={eventChartMargin.top}
+            x2={width - eventChartMargin.right}
+            y2={height - eventChartMargin.bottom}
             stroke="black"
         />
 
@@ -106,8 +106,8 @@
             <line
                 x1={xAxisScale(tick)}
                 x2={xAxisScale(tick)}
-                y1={margin.top}
-                y2={height - margin.bottom}
+                y1={eventChartMargin.top}
+                y2={height - eventChartMargin.bottom}
                 fill="none"
                 shape-rendering="crispEdges"
                 stroke="black"
@@ -119,8 +119,8 @@
 
         {#each yAxisScale.ticks() as tick}
             <line
-                x1={margin.left}
-                x2={width - margin.right}
+                x1={eventChartMargin.left}
+                x2={width - eventChartMargin.right}
                 y1={yAxisScale(tick)}
                 y2={yAxisScale(tick)}
                 fill="none"
@@ -134,7 +134,7 @@
 
         <text
             x="50%"
-            y={height - margin.bottom + 60}
+            y={height - eventChartMargin.bottom + 60}
             text-anchor="middle"
             font-family="sans-serif"
             font-size="24px"
@@ -152,7 +152,7 @@
         </text>
 
         {#if showLegend}
-            <Legend {c1} {c2} x={margin.left + 20} y={margin.top + 20} />
+            <Legend {c1} {c2} x={eventChartMargin.left + 20} y={eventChartMargin.top + 20} />
         {/if}
     </svg>
 </div>
