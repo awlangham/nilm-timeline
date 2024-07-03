@@ -16,17 +16,23 @@
     const dispatch = createEventDispatcher();
 
     const onKeyPress = (e) => {
+        // Allow zooming in/out and translating left/right
+        // with arrow keys and WASD
         switch (e.keyCode) {
             case 38:
+            case 87:
                 zoomIn();
                 break;
             case 40:
+            case 83:
                 zoomOut();
                 break;
             case 37:
+            case 65:
                 translateLeft();
                 break;
             case 39:
+            case 68:
                 translateRight();
                 break;
         }
