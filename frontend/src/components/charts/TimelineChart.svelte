@@ -15,6 +15,23 @@
 
     const dispatch = createEventDispatcher();
 
+    const onKeyPress = (e) => {
+        switch (e.keyCode) {
+            case 38:
+                zoomIn();
+                break;
+            case 40:
+                zoomOut();
+                break;
+            case 37:
+                translateLeft();
+                break;
+            case 39:
+                translateRight();
+                break;
+        }
+    };
+
     const marginTop = 50,
         marginBottom = 75,
         marginLeft = 300,
@@ -225,6 +242,8 @@
         {endTime.toLocaleString(undefined, { hour12: false })}
     </Title>
 </svg>
+
+<svelte:window on:keydown={onKeyPress} />
 
 <style>
     #zoomPanButtons {
