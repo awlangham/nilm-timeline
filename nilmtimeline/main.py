@@ -7,7 +7,7 @@ from merlin.installation import load_exemplar
 from merlin.installation import CurrentInstallation
 from merlin.supervised.trainola import trainola
 
-from nilmtimeline.find_intervals import find_intervals
+from nilmtimeline.interval import find_intervals
 
 app = FastAPI()
 
