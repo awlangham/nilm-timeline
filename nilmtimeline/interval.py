@@ -9,6 +9,7 @@ class Interval:
             'name': self.load_name,
             'start_ts': self.start,
             'end_ts': self.end,
-            'num_on': 1,
-            'max_on': 1
+            'distance': 0, # TODO
+            'num_on': 1,  # TODO
+            'max_on': 1  # TODO
         }
