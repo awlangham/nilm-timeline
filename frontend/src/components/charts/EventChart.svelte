@@ -70,18 +70,29 @@
                 fill="none"
                 stroke={c2}
                 stroke-width="3px"
-                in:draw={{ duration: drawDuration, delay: drawDelay, easing: drawEasing}}
+                in:draw={{
+                    duration: drawDuration,
+                    delay: drawDelay,
+                    easing: drawEasing,
+                }}
             />
             <path
                 d={path1(y1)}
                 fill="none"
                 stroke={c1}
                 stroke-width="3px"
-                in:draw={{ duration: drawDuration, delay: drawDelay, easing: drawEasing}}
+                in:draw={{
+                    duration: drawDuration,
+                    delay: drawDelay,
+                    easing: drawEasing,
+                }}
             />
         {/key}
 
-        <g bind:this={yAxis} transform="translate({eventChartMargin.left}, 0)" />
+        <g
+            bind:this={yAxis}
+            transform="translate({eventChartMargin.left}, 0)"
+        />
         <g
             bind:this={xAxis}
             transform="translate(0, {height - eventChartMargin.bottom})"
@@ -152,7 +163,12 @@
         </text>
 
         {#if showLegend}
-            <Legend {c1} {c2} x={eventChartMargin.left + 20} y={eventChartMargin.top + 20} />
+            <Legend
+                {c1}
+                {c2}
+                x={eventChartMargin.left + 20}
+                y={eventChartMargin.top + 20}
+            />
         {/if}
     </svg>
 </div>

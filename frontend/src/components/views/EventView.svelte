@@ -8,6 +8,12 @@
 
     let onTransient, offTransient, onExemplar, offExemplar, loadName, metrics;
 
+    const onKeyPress = (e) => {
+        if (e.keyCode === 27) {
+            selectedInterval = [];
+        }
+    };
+
     let allData = [];
     $: if (onTransient && offTransient && onExemplar && offExemplar) {
         allData = onTransient["P"].concat(
@@ -78,6 +84,8 @@
         <MetricsView {loadName} {metrics} />
     {/await}
 </div>
+
+<svelte:window on:keydown={onKeyPress} />
 
 <style>
     #back-btn {
