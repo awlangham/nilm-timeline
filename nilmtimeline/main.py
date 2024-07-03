@@ -4,9 +4,9 @@ import numpy as np
 from joule.api import get_node
 
 from merlin.installation import load_exemplar
+from merlin.installation import CurrentInstallation
 from merlin.supervised.trainola import trainola
 
-from nilmtimeline.interval import Interval
 from nilmtimeline.find_intervals import find_intervals
 
 app = FastAPI()
@@ -27,34 +27,20 @@ async def get_range():
 @app.get('/api/data')
 async def get_data(start_ts: int, end_ts: int):
     node = get_node()
-    events = await node.event_stream_read(app.dataset + '/events', start=start_ts, end=end_ts)
-    await node.close()
+    installation = CurrentInstallation()
+    load_names = installation.get_load_names()
 
-    start_times = {}
     intervals = []
-    load_names = set()
-    for event in events:
-        try:
-            load_name = event.content['label']
-            load_names.add(load_name)
-        except KeyError:
-            continue
+    for load_name in load_names:
+        json_filter = json.dumps([[['label', 'is', load_name]]])
+        load_events = await node.event_stream_read(app.dataset + '/events', start=start_ts, end=end_ts, json_filter=json_filter)
+        intervals += find_intervals(load_events, load_name)
 
-        if event.content['type'] == 'OFF to ON':
-            start_times[load_name] = event.start_time
-        elif event.content['type'] == 'ON to OFF':
-            try:
-                start_time = start_times[load_name]
-            except:
-                continue
-
-            interval = Interval(load_name, start_time, event.end_time)
-            intervals.append(interval.to_dict())
-            del start_times[load_name]
+    await node.close()
 
     return {
         'loads': intervals,
-        'labels': list(load_names)
+        'labels': load_names
     }
 
 
@@ -88,7 +74,7 @@ async def get_event(start_ts: int, end_ts: int):
     await node.close()
 
     last_24h_ons = [event for event in last_24h_events if event.content['type'] == 'OFF to ON']
-    run_durations = [interval['end_ts'] - interval['start_ts'] for interval in find_intervals(last_24h_events)]
+    run_durations = [interval['end_ts'] - interval['start_ts'] for interval in find_intervals(last_24h_events, event_label)]
 
     metrics = {
         'num_runs_24h': len(last_24h_ons),
