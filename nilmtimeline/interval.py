@@ -1,3 +1,6 @@
+from joule.utilities import time_now
+
+
 def find_intervals(events, load_name):
     start_time = None
     distance = None
@@ -11,6 +14,11 @@ def find_intervals(events, load_name):
             interval = Interval(load_name, start_time, event.end_time, distance)
             intervals.append(interval.to_dict())
             start_time = None
+
+    # If the last event is an ON, return it too
+    if start_time is not None and distance is not None:
+        interval = Interval(load_name, start_time, time_now(), distance)
+        intervals.append(interval.to_dict())
 
     return intervals
 
