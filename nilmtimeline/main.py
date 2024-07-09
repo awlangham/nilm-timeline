@@ -1,12 +1,18 @@
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 import json
 import numpy as np
 from joule.api import get_node
+import uvicorn
+from importlib.resources import files
+import click
+
 
 from merlin.installation import load_exemplar
 from merlin.installation import CurrentInstallation
 from merlin.supervised.trainola import trainola
 
+import nilmtimeline
 from nilmtimeline.interval import find_intervals
 from nilmtimeline.transient import Transient
 
@@ -20,7 +26,7 @@ async def get_range():
     await node.close()
 
     return {
-        'range_start': event_info.end - 6 * 60 * 60e6,  # 6 hours
+        'range_start': event_info.end - 1 * 60 * 60e6,  # 1 hour
         'range_end': event_info.end
     }
 
@@ -92,3 +98,12 @@ async def get_event(start_ts: int, end_ts: int):
         'load_name': event_label,
         'metrics': metrics
     }
+
+
+@click.command()
+@click.argument('dataset')
+def run(dataset: str):
+    app.dataset = dataset
+    static_path = files(nilmtimeline).joinpath('static')
+    app.mount('/', StaticFiles(directory=static_path, html=True), name='static')
+    uvicorn.run('nilmtimeline.main:app', host='', port=8050)
