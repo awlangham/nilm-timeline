@@ -1,5 +1,4 @@
 from fastapi import APIRouter, Request
-
 from joule.api import get_node
 
 router = APIRouter()

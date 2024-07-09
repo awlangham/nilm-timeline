@@ -9,38 +9,18 @@ import click
 
 
 from merlin.installation import load_exemplar
-from merlin.installation import CurrentInstallation
 from merlin.supervised.trainola import trainola
 
 import nilmtimeline
 from nilmtimeline.interval import find_intervals
 from nilmtimeline.transient import Transient
 
-from nilmtimeline.endpoints import range
+from nilmtimeline.endpoints import range, data
 
 app = FastAPI()
 
 app.include_router(range.router)
-
-
-@app.get('/api/data')
-async def get_data(start_ts: int, end_ts: int):
-    node = get_node()
-    installation = CurrentInstallation()
-    load_names = installation.get_load_names()
-
-    intervals = []
-    for load_name in load_names:
-        json_filter = json.dumps([[['label', 'is', load_name]]])
-        load_events = await node.event_stream_read(app.dataset + '/events', start=start_ts, end=end_ts, json_filter=json_filter)
-        intervals += find_intervals(load_events, load_name)
-
-    await node.close()
-
-    return {
-        'loads': intervals,
-        'labels': load_names
-    }
+app.include_router(data.router)
 
 
 @app.get('/api/event/{start_ts}/{end_ts}')
