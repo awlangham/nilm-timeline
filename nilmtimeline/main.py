@@ -16,19 +16,11 @@ import nilmtimeline
 from nilmtimeline.interval import find_intervals
 from nilmtimeline.transient import Transient
 
+from nilmtimeline.endpoints import range
+
 app = FastAPI()
 
-
-@app.get('/api/range')
-async def get_range():
-    node = get_node()
-    event_info = await node.event_stream_info(app.dataset + '/events')
-    await node.close()
-
-    return {
-        'range_start': event_info.end - 1 * 60 * 60e6,  # 1 hour
-        'range_end': event_info.end
-    }
+app.include_router(range.router)
 
 
 @app.get('/api/data')
