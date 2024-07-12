@@ -16,7 +16,7 @@ def find_intervals(events, load_name):
             start_time = None
 
     # If the last event is an ON, return it too
-    if start_time is not None and distance is not None:
+    if start_time is not None:
         interval = Interval(load_name, start_time, time_now(), distance)
         intervals.append(interval.to_dict())
 
