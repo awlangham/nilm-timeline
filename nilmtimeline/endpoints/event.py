@@ -4,7 +4,7 @@ from fastapi import APIRouter, Request
 from joule.api import get_node
 
 from merlin.supervised.trainola import trainola
-from merlin.installation import load_exemplar
+from merlin.installation import CurrentInstallation
 from nilmtimeline.transient import Transient
 from nilmtimeline.interval import find_intervals
 
@@ -27,12 +27,14 @@ async def get_event(start_ts: int, end_ts: int, request: Request):
     off_selected_data = await node.data_read_array(request.app.dataset + '/transients', flatten=True, start=end_ts - 1e6, end=end_ts)
     off_transient = Transient(off_selected_data, is_on=False)
 
+    current_installation = CurrentInstallation()
+
     # Get ON exemplar
-    on_exemplar_data = await load_exemplar(event_label, 'OFF', 'ON')
+    on_exemplar_data = await current_installation.load_exemplar(event_label, 'OFF', 'ON')
     on_exemplar = Transient(on_exemplar_data)
 
     # Get OFF exemplar
-    off_exemplar_data = await load_exemplar(event_label, 'ON', 'OFF')
+    off_exemplar_data = await current_installation.load_exemplar(event_label, 'ON', 'OFF')
     off_exemplar = Transient(off_exemplar_data, is_on=False)
 
     json_filter = json.dumps([[['label', 'is', event_label]]])
