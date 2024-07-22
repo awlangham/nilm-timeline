@@ -20,4 +20,4 @@ def run(dataset: str):
     app.dataset = dataset
     static_path = files(nilmtimeline).joinpath('static')
     app.mount('/', StaticFiles(directory=static_path, html=True), name='static')
-    uvicorn.run('nilmtimeline.main:app', host='', port=8050)
+    uvicorn.run('nilmtimeline.main:app', host='', port=8051)
