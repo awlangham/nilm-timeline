@@ -27,7 +27,7 @@ async def get_event(start_ts: int, end_ts: int, request: Request):
     off_selected_data = await node.data_read_array(request.app.dataset + '/transients', flatten=True, start=end_ts - 1e6, end=end_ts)
     off_transient = Transient(off_selected_data, is_on=False)
 
-    current_installation = CurrentInstallation()
+    current_installation = CurrentInstallation(node)
 
     # Get ON exemplar
     on_exemplar_data = await current_installation.load_exemplar(event_label, 'OFF', 'ON')

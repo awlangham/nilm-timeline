@@ -10,7 +10,7 @@ router = APIRouter()
 @router.get('/api/data')
 async def get_data(start_ts: int, end_ts: int, request: Request):
     node = get_node()
-    installation = CurrentInstallation()
+    installation = CurrentInstallation(node)
     load_names = installation.get_load_names()
 
     intervals = []
