@@ -26,7 +26,7 @@
 
     let xAxis, yAxis;
 
-    const width = window.innerWidth * 0.3,
+    const width = window.innerWidth * 0.355,
         height = window.innerHeight * 0.47;
 
     $: xMin = Math.min(...x);

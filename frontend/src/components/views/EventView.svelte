@@ -103,7 +103,7 @@
     .event-charts-container {
         display: flex;
         flex-wrap: wrap;
-        width: 60%;
+        width: 70%;
         margin-top: 10px;
     }
 </style>
