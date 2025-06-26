@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Request
 from joule.api import get_node
 
-from merlin.installation import CurrentInstallation
+from merlin.api import Installation
 from nilmtimeline.interval import find_intervals
 
 router = APIRouter()
@@ -10,12 +10,14 @@ router = APIRouter()
 @router.get('/api/data')
 async def get_data(start_ts: int, end_ts: int, request: Request):
     node = get_node()
-    installation = CurrentInstallation(node)
-    load_names = installation.get_load_names()
+    installation = Installation(node)
+
+    with installation.config() as cf:
+        load_names = list(cf['loads'].keys())
 
     intervals = []
     for load_name in load_names:
-        events = await node.event_stream_read(
+        events = await node.event_stream_read_list(
             request.app.dataset + '/events',
             start=start_ts,
             end=end_ts
