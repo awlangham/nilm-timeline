@@ -6,12 +6,15 @@ class Transient:
         self.timestamps = data[:, 0] - data[0, 0]
         self.timestamps = self.timestamps / 1e6
 
+        self.P = data[:, 1] + data[:, 9] + data[:, 17]
+        self.Q = data[:, 2] + data[:, 10] + data[:, 18]
+
         if is_on:
-            self.P = data[:, 1] - np.mean(data[:5, 1])
-            self.Q = data[:, 2] - np.mean(data[:5, 2])
+            self.P -= np.mean(self.P[:5])
+            self.Q -= np.mean(self.Q[:5])
         else:
-            self.P = data[:, 1] - np.mean(data[-5:, 1])
-            self.Q = data[:, 2] - np.mean(data[-5:, 2])
+            self.P -= np.mean(self.P[-5:])
+            self.Q -= np.mean(self.Q[-5:])
 
     def to_dict(self) -> str:
         return {'timestamps': self.timestamps.tolist(), 'P': self.P.tolist(), 'Q': self.Q.tolist()}
