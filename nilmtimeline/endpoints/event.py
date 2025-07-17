@@ -48,8 +48,8 @@ async def get_event(start_ts: int, end_ts: int, request: Request):
     last_24h_ons = [event for event in last_24h_events if event.content['type'] == 'OFF to ON']
     run_durations = [interval['end_ts'] - interval['start_ts'] for interval in find_intervals(last_24h_events, event_label)]
 
-    with current_installation.config() as cf:
-        on_ss = cf['loads'][event_label]['states']['ON']
+    cf = current_installation.read_config()
+    on_ss = cf['loads'][event_label]['states']['ON']
     P_ss_nom = on_ss[0] + on_ss[2] + on_ss[4]
     Q_ss_nom = on_ss[1] + on_ss[3] + on_ss[5]
 

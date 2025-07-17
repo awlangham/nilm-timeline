@@ -12,8 +12,8 @@ async def get_data(start_ts: int, end_ts: int, request: Request):
     node = get_node()
     installation = Installation(node)
 
-    with installation.config() as cf:
-        load_names = list(cf['loads'].keys())
+    cf = installation.read_config()
+    load_names = list(cf['loads'].keys())
 
     intervals = []
     for load_name in load_names:
@@ -32,7 +32,7 @@ async def get_data(start_ts: int, end_ts: int, request: Request):
                         load_index = event.content['label'].split(',').index(load_name)
                         event_type = event.content['type'].split(',')[load_index]
                         event.content['type'] = event_type
-                    
+
                     load_events.append(event)
             except KeyError:
                 pass
