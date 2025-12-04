@@ -67,7 +67,7 @@
             height - timelineChartMargin.bottom,
         ])
         .padding(0.1);
-    $: colorScale = d3.scaleOrdinal(loadNames, d3.schemeTableau10);
+    $: colorScale = d3.scaleOrdinal(loadNames, d3.schemeObservable10);
     $: startTime = timeAxisScale.domain()[0];
     $: endTime = timeAxisScale.domain()[1];
 
@@ -230,7 +230,7 @@
                 y={loadAxisScale(d.name)}
                 fill={colorScale(d.name)}
                 height={(loadAxisScale.bandwidth() * d.num_on) / d.max_on}
-                distance={d.distance}
+                faulty={d.faulty}
                 on:select={() => {
                     selectedInterval = [d.start_ts, d.end_ts];
                 }}

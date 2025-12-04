@@ -1,7 +1,7 @@
 <script>
     import { createEventDispatcher } from "svelte";
 
-    export let start_x, end_x, y, height, fill, distance;
+    export let start_x, end_x, y, height, fill, faulty;
 
     const dispatch = createEventDispatcher();
 
@@ -14,8 +14,7 @@
     transform="translate({start_x}, {y})"
     {height}
     width={Math.max(2, end_x - start_x)}
-    {fill}
-    opacity={1 - distance}
+    fill={faulty ? 'red' : fill}
     rx="10"
     ry="10"
     on:click={runSelected}

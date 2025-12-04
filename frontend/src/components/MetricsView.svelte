@@ -2,6 +2,7 @@
     import { fade } from "svelte/transition";
     import { formatSeconds } from "./charts/utilities";
     import Gauge from "./Gauge.svelte";
+    import Phasor from "./Phasor.svelte";
 
     export let loadName, metrics;
 </script>
@@ -39,6 +40,8 @@
         actualValue={metrics.Q_ss_seen}
         label="Steady-State Q (Var)"
     ></Gauge>
+
+    <Phasor observed={metrics.zero_seen} nominal={metrics.zero_nom}></Phasor>
 </div>
 
 <style>
