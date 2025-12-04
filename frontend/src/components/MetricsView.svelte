@@ -41,7 +41,9 @@
         label="Steady-State Q (Var)"
     ></Gauge>
 
-    <Phasor observed={metrics.zero_seen} nominal={metrics.zero_nom}></Phasor>
+    <div>
+        <Phasor observed={metrics.zero_seen} nominal={metrics.zero_nom}></Phasor>
+    </div>
 </div>
 
 <style>

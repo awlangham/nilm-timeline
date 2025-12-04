@@ -3,17 +3,26 @@
 
     export let observed, nominal;
 
-    const width = 150,
-        height = 150;
-    const marginLeft = 5,
+    const width = 180,
+        height = 180;
+    const marginLeft = 20,
         marginRight = 5,
         marginTop = 5,
-        marginBottom = 5;
+        marginBottom = 30;
 
-    const xMin = -0.1,
-        xMax = 0.1,
-        yMin = -0.1,
-        yMax = 0.1;
+    // const xMin = -0.1,
+    //     xMax = 0.1,
+    //     yMin = -0.1,
+    //     yMax = 0.1;
+
+    const observedMag = Math.sqrt(observed[0] ** 2 + observed[1] ** 2);
+    const nominalMag = Math.sqrt(nominal[0] ** 2 + nominal[1] ** 2);
+    const axisExtent = 1.1 * Math.max(observedMag, nominalMag);
+
+    const xMin = -axisExtent,
+        xMax = axisExtent,
+        yMin = -axisExtent,
+        yMax = axisExtent;
 
     const xAxisScale = d3.scaleLinear(
         [xMin, xMax],
@@ -44,6 +53,16 @@
             <path d="M 0 0 L 10 5 L 0 10 z" />
         </marker>
     </defs>
+
+    <ellipse
+        cx={xAxisScale(nominal[0])}
+        cy={yAxisScale(nominal[1])}
+        rx={xAxisScale(nominal[0] + 0.01) - xAxisScale(nominal[0])}
+        ry={yAxisScale(nominal[1] + 0.01) - yAxisScale(nominal[1])}
+        fill="green"
+        fill-opacity="0.5"
+    ></ellipse>
+
     <line
         x1={marginLeft + width / 2}
         y1={marginTop}
@@ -79,9 +98,24 @@
         stroke-width="2"
         marker-end="url(#arrow)"
     />
+
+    <text
+        x={xAxisScale(0)}
+        y={marginTop + height + marginBottom - 5}
+        text-anchor="middle">In-Phase</text
+    >
+
+    <text
+        transform="rotate(-90, 5, {yAxisScale(0)})"
+        x={5}
+        y={yAxisScale(0)}
+        dominant-baseline="hanging"
+        text-anchor="middle">Quadrature</text>
 </svg>
 
+<!-- {axisExtent}
 {observed}
+{nominal} -->
 
 <style>
     #gauge {
