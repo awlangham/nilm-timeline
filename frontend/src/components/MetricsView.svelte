@@ -12,7 +12,7 @@
 
     <p>Number of runs in previous 24h: {metrics.num_runs_24h}</p>
 
-    <p>
+    <!-- <p>
         {#if metrics.avg_run_duration}
             Average run duration in previous 24h: {formatSeconds(
                 metrics.avg_run_duration,
@@ -20,7 +20,7 @@
         {:else}
             No runs in previous 24h
         {/if}
-    </p>
+    </p> -->
     <p>
         ON match score: {(100 * (1 - metrics.on_distance)).toFixed(1)}%
     </p>

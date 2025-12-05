@@ -46,7 +46,7 @@ async def get_event(start_ts: int, end_ts: int, request: Request):
     await node.close()
 
     last_24h_ons = [event for event in last_24h_events if event.content['type'] == 'OFF to ON']
-    run_durations = [interval['end_ts'] - interval['start_ts'] for interval in find_intervals(last_24h_events, event_label)]
+    # run_durations = [interval['end_ts'] - interval['start_ts'] for interval in find_intervals(last_24h_events, event_label)]
 
     cf = current_installation.read_config()
     on_ss = cf['loads'][event_label]['states']['ON']
@@ -59,7 +59,7 @@ async def get_event(start_ts: int, end_ts: int, request: Request):
         'P_ss_seen': event.content['P_ss'],
         'Q_ss_seen': event.content['Q_ss'],
         'num_runs_24h': len(last_24h_ons),
-        'avg_run_duration': np.mean(run_durations) / 1e6 if len(run_durations) > 0 else None,
+        # 'avg_run_duration': np.mean(run_durations) / 1e6 if len(run_durations) > 0 else None,
         'on_distance': trainola(on_selected_data.T[1:], on_exemplar_data.T[1:]),
         'off_distance': trainola(off_selected_data.T[1:], off_exemplar_data.T[1:]),
         'zero_seen': [np.real(on_transient.zero_signature), np.imag(on_transient.zero_signature)],

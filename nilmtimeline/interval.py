@@ -2,7 +2,7 @@ import numpy as np
 from joule.utilities import time_now
 
 
-def find_intervals(events, load_name):
+def find_intervals(events, load_name, on_exemplar_event, off_exemplar_event):
     start_time = None
     faulty = None
     intervals = []
@@ -11,7 +11,9 @@ def find_intervals(events, load_name):
             start_time = event.start_time
             # TODO: use both OFF and ON distances
             # distance = event.content['distance']
-            faulty = np.sqrt(event.content['I0_i'] ** 2 + event.content['I0_q'] ** 2) > 0.01 # TO DO parametrize this and remove exemplar offset
+            # print(load_name)
+            faulty = np.sqrt((event.content['I0_i'] - on_exemplar_event.content['I0_i']) ** 2 +
+                             (event.content['I0_q'] - on_exemplar_event.content['I0_q']) ** 2) > 0.01  # TO DO parametrize this
         elif event.content['type'] == 'ON to OFF' and start_time is not None:
             interval = Interval(load_name, start_time, event.end_time, faulty)
             intervals.append(interval.to_dict())
