@@ -71,13 +71,21 @@
             off={true}
             yAxisLabel="Selected OFF"
         />
-        <EventChart data={onExemplar} {yMin} {yMax} yAxisLabel="Exemplar ON" />
+        <EventChart
+            data={onExemplar}
+            {yMin}
+            {yMax}
+            yAxisLabel="Exemplar ON"
+            exemplar={true}
+            showLegend={true}
+        />
         <EventChart
             data={offExemplar}
             {yMin}
             {yMax}
             off={true}
             yAxisLabel="Exemplar OFF"
+            exemplar={true}
         />
     </div>
     {#await transientPromise then}

@@ -9,8 +9,12 @@
         yMin,
         yMax,
         yAxisLabel,
+        exemplar = false,
         off = false,
         showLegend = false;
+
+    const c1 = exemplar ? "#aec7e8" : "#1f77b4";
+    const c2 = exemplar ? "#ffbb78" : "#ff7f0e";
 
     const drawDuration = 500;
     const drawDelay = off ? drawDuration : 0;
@@ -20,13 +24,9 @@
     $: y1 = data["P"];
     $: y2 = data["Q"];
 
-    const colorScale = d3.scaleOrdinal(["P", "Q"], d3.schemeTableau10);
-    const c1 = colorScale("P"),
-        c2 = colorScale("Q");
-
     let xAxis, yAxis;
 
-    const width = window.innerWidth * 0.355,
+    const width = window.innerWidth * 0.35,
         height = window.innerHeight * 0.47;
 
     $: xMin = Math.min(...x);
@@ -64,6 +64,17 @@
 
 <div class="event-chart-container">
     <svg {width} {height}>
+        <defs>
+            <filter id="shadow">
+                <feDropShadow
+                    dx="0.2"
+                    dy="1.5"
+                    flood-opacity="0.5"
+                    stdDeviation="1"
+                />
+            </filter>
+        </defs>
+
         {#key data}
             <path
                 d={path2(y2)}
@@ -75,6 +86,7 @@
                     delay: drawDelay,
                     easing: drawEasing,
                 }}
+                filter="url(#shadow)"
             />
             <path
                 d={path1(y1)}
@@ -86,6 +98,7 @@
                     delay: drawDelay,
                     easing: drawEasing,
                 }}
+                filter="url(#shadow)"
             />
         {/key}
 

@@ -28,12 +28,10 @@ async def get_data(start_ts: int, end_ts: int, request: Request):
         on_exemplar = await installation.load_exemplar(load_name, 'OFF', 'ON')
         on_exemplar_start_ts, on_exemplar_end_ts = on_exemplar[0, 0], on_exemplar[-1, 0]
         on_exemplar_event = (await node.event_stream_read_list(request.app.dataset + '/events', start=on_exemplar_start_ts, end=on_exemplar_end_ts))[0]
-        print(on_exemplar_event)
 
         off_exemplar = await installation.load_exemplar(load_name, 'ON', 'OFF')
         off_exemplar_start_ts, off_exemplar_end_ts = off_exemplar[0, 0], off_exemplar[-1, 0]
         off_exemplar_event = (await node.event_stream_read_list(request.app.dataset + '/events', start=off_exemplar_start_ts, end=off_exemplar_end_ts))[0]
-        print(off_exemplar_event)
 
         load_events = []
         for event in events:
