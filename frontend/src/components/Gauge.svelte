@@ -17,13 +17,29 @@
 
     const needleColor = "#444444";
 
-    let barArc = d3
+    let lowerBarArc = d3
         .arc()
         .outerRadius(radius)
         .innerRadius(radius - barWidth)
         .cornerRadius(3)
         .startAngle(-Math.PI / 2)
+        .endAngle(-Math.PI / 4);
+
+    let upperBarArc = d3
+        .arc()
+        .outerRadius(radius)
+        .innerRadius(radius - barWidth)
+        .cornerRadius(3)
+        .startAngle(Math.PI / 4)
         .endAngle(Math.PI / 2);
+
+    let greenBarArc = d3
+        .arc()
+        .outerRadius(radius)
+        .innerRadius(radius - barWidth)
+        .cornerRadius(3)
+        .startAngle(-Math.PI / 4)
+        .endAngle(Math.PI / 4);
 
     let labelsArc = d3
         .arc()
@@ -52,7 +68,9 @@
     height={height + marginTop + marginBottom}
 >
     <g transform="translate({width / 2 + marginLeft}, {height + marginTop})">
-        <path d="{barArc()}," fill="green" stroke={needleColor}></path>
+        <path d={lowerBarArc()} fill="yellow" stroke={needleColor}></path>
+        <path d={upperBarArc()} fill="yellow" stroke={needleColor}></path>
+        <path d="{greenBarArc()}" fill="green" stroke={needleColor}></path>
         <path id="labelsArc" d={labelsArc()}></path>
         <circle cx="0" cy="0" r="15" fill={needleColor}></circle>
         <path
