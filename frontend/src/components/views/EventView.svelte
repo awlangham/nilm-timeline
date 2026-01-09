@@ -57,36 +57,26 @@
 
 <div class="event-view-container">
     <div class="event-charts-container">
-        <EventChart
-            data={onTransient}
-            {yMin}
-            {yMax}
-            yAxisLabel="Selected ON"
-            showLegend={true}
-        />
-        <EventChart
-            data={offTransient}
-            {yMin}
-            {yMax}
-            off={true}
-            yAxisLabel="Selected OFF"
-        />
-        <EventChart
-            data={onExemplar}
-            {yMin}
-            {yMax}
-            yAxisLabel="Exemplar ON"
-            exemplar={true}
-            showLegend={true}
-        />
-        <EventChart
-            data={offExemplar}
-            {yMin}
-            {yMax}
-            off={true}
-            yAxisLabel="Exemplar OFF"
-            exemplar={true}
-        />
+        <div class="row">
+            <EventChart data={onTransient} {yMin} {yMax} showLegend={true} />
+            <EventChart data={offTransient} {yMin} {yMax} off={true} />
+        </div>
+        <div class="row">
+            <EventChart
+                data={onExemplar}
+                {yMin}
+                {yMax}
+                exemplar={true}
+                showLegend={true}
+            />
+            <EventChart
+                data={offExemplar}
+                {yMin}
+                {yMax}
+                off={true}
+                exemplar={true}
+            />
+        </div>
     </div>
     {#await transientPromise then}
         <MetricsView {loadName} {metrics} />
@@ -106,12 +96,42 @@
 
     .event-view-container {
         display: flex;
+        /* height: 100%; */
+        flex: 1;
+        padding-top: 10px;
+        padding-bottom: 10px;
     }
 
     .event-charts-container {
         display: flex;
         flex-wrap: wrap;
+        flex-direction: column;
         width: 70%;
-        margin-top: 10px;
+        /* margin-top: 10px; */
+        /* margin-bottom: 10px; */
+        /* background-color: blue; */
+    }
+
+    .row {
+        display: flex;
+        /* width: 100%; */
+        flex: 1;
+        border: 2px solid gray;
+        border-radius: 10px;
+        box-shadow: 3px 1px 4px #888;
+        padding-left: 50px;
+        padding-right: 50px;
+        margin-left: 10px;
+        margin-right: 10px;
+        /* margin-bottom: 10px;
+        margin-top: 10px; */
+    }
+
+    .row:first-child {
+        margin-bottom: 5px;
+    }
+
+    .row:last-child {
+        margin-top: 5px;
     }
 </style>

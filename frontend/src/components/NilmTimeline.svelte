@@ -13,9 +13,8 @@
     </div>
 
     {#if selectedInterval.length != 0}
-        <div
-            hidden={selectedInterval.length === 0}
-            transition:fade={fadeConfig}
+        <div class='event-div'
+            in:fade={fadeConfig}
         >
             <EventView bind:selectedInterval />
         </div>
@@ -24,10 +23,20 @@
 
 <style>
     .main {
-        display: grid;
+        display: flex;
+        height: 100vh;
     }
 
-    .main > * {
+    /* .main > * {
         grid-area: 1 / 1;
+    } */
+
+    .main div {
+        /* display: flex; */
+        flex: 1;
+    }
+
+    .event-div {
+        display: flex;
     }
 </style>

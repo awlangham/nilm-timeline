@@ -8,7 +8,6 @@
     export let data = { timestamps: [], P: [], Q: [] },
         yMin,
         yMax,
-        yAxisLabel,
         exemplar = false,
         off = false,
         showLegend = false;
@@ -26,8 +25,16 @@
 
     let xAxis, yAxis;
 
-    const width = window.innerWidth * 0.35,
-        height = window.innerHeight * 0.47;
+    // const width = window.innerWidth * 0.35,
+    //     height = window.innerHeight * 0.47;
+
+    let svg, rect, width, height;
+
+    $: if (svg) {
+        rect = svg.getBoundingClientRect();
+        width = rect.width;
+        height = rect.height;
+    }
 
     $: xMin = Math.min(...x);
     $: xMax = Math.max(...x);
@@ -63,7 +70,7 @@
 </script>
 
 <div class="event-chart-container">
-    <svg {width} {height}>
+    <svg bind:this={svg}>
         <!-- <defs>
             <filter id="shadow">
                 <feDropShadow
@@ -164,15 +171,6 @@
             Time (s)
         </text>
 
-        <text
-            transform="translate(50, {height / 2}),rotate(-90)"
-            text-anchor="middle"
-            font-family="sans-serif"
-            font-size="24px"
-        >
-            {yAxisLabel}
-        </text>
-
         {#if showLegend}
             <Legend
                 {c1}
@@ -185,7 +183,11 @@
 </div>
 
 <style>
-    .event-chart-container {
+    svg {
+        width: 100%;
+        height: 100%;
+    }
+    /* .event-chart-container {
         width: 48%;
         margin-left: auto;
         margin-right: auto;
@@ -194,5 +196,10 @@
         border-radius: 10px;
         box-shadow: 3px 1px 4px #888;
         background-color: white;
+    } */
+
+    .event-chart-container {
+        display: flex;
+        flex: 1;
     }
 </style>

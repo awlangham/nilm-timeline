@@ -50,8 +50,9 @@
     .metrics-container {
         text-align: center;
         width: 30%;
-        margin-top: 10px;
-        margin-bottom: 10px;
+        flex: 1;
+        /* margin-top: 10px; */
+        /* margin-bottom: 10px; */
         margin-left: auto;
         margin-right: 10px;
         border: 2px solid gray;

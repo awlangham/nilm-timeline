@@ -3,8 +3,8 @@ export const yPadding = 0.25;
 export const eventChartMargin = {
     'top': 20,
     'bottom': 75,
-    'left': 110,
-    'right': 50
+    'left': 0,
+    'right': 0
 };
 
 export const timelineChartMargin = {
