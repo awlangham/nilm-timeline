@@ -22,7 +22,7 @@ def find_intervals(events, load_name, on_exemplar_event, off_exemplar_event):
 
     # If the last event is an ON, return it too
     if start_time is not None:
-        interval = Interval(load_name, start_time, time_now(), faulty)
+        interval = Interval(load_name, start_time, time_now() + 2e6, faulty)
         intervals.append(interval.to_dict())
 
     return intervals
