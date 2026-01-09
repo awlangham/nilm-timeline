@@ -64,7 +64,7 @@
 
 <div class="event-chart-container">
     <svg {width} {height}>
-        <defs>
+        <!-- <defs>
             <filter id="shadow">
                 <feDropShadow
                     dx="0.2"
@@ -73,32 +73,30 @@
                     stdDeviation="1"
                 />
             </filter>
-        </defs>
+        </defs> -->
 
         {#key data}
             <path
                 d={path2(y2)}
                 fill="none"
                 stroke={c2}
-                stroke-width="3px"
+                stroke-width="4px"
                 in:draw={{
                     duration: drawDuration,
                     delay: drawDelay,
                     easing: drawEasing,
                 }}
-                filter="url(#shadow)"
             />
             <path
                 d={path1(y1)}
                 fill="none"
                 stroke={c1}
-                stroke-width="3px"
+                stroke-width="4px"
                 in:draw={{
                     duration: drawDuration,
                     delay: drawDelay,
                     easing: drawEasing,
                 }}
-                filter="url(#shadow)"
             />
         {/key}
 
