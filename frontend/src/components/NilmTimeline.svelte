@@ -8,12 +8,15 @@
 </script>
 
 <div class="main">
-    {#if selectedInterval.length === 0}
-        <div transition:fade={fadeConfig}>
-            <TimelineView bind:selectedInterval />
-        </div>
-    {:else}
-        <div transition:fade={fadeConfig}>
+    <div hidden={selectedInterval.length != 0}>
+        <TimelineView bind:selectedInterval />
+    </div>
+
+    {#if selectedInterval.length != 0}
+        <div
+            hidden={selectedInterval.length === 0}
+            transition:fade={fadeConfig}
+        >
             <EventView bind:selectedInterval />
         </div>
     {/if}
