@@ -71,9 +71,14 @@
             />
         </div>
     </div>
-    {#await transientPromise then}
-        <MetricsView {loadName} {metrics} />
-    {/await}
+
+    <div class="metrics-container">
+        {#await transientPromise}
+            <div class="loading">Loading</div>
+        {:then}
+            <MetricsView {loadName} {metrics} />
+        {/await}
+    </div>
 </div>
 
 <button
@@ -107,7 +112,6 @@
 
     .event-view-container {
         display: flex;
-        /* height: 100%; */
         flex: 1;
         padding-top: 10px;
         padding-bottom: 10px;
@@ -138,5 +142,49 @@
 
     .row:last-child {
         margin-top: 5px;
+    }
+
+    .metrics-container {
+        position: relative;
+        text-align: center;
+        width: 30%;
+        flex: 1;
+        margin-left: auto;
+        margin-right: 10px;
+        border: 2px solid gray;
+        border-radius: 10px;
+        box-shadow: 3px 1px 4px #888;
+        background-color: white;
+    }
+
+    .loading {
+        position: absolute;
+        top: 50%;
+        left: 45%;
+        transform: translate(0, -50%);
+        font-family: sans-serif;
+        font-size: 24px;
+    }
+
+    .loading::after {
+        content: ".";
+        animation: dots 1s steps(3, end) infinite;
+    }
+
+    @keyframes dots {
+        0%,
+        20% {
+            content: ".";
+        }
+        40% {
+            content: "..";
+        }
+        60% {
+            content: "...";
+        }
+        80%,
+        100% {
+            content: "";
+        }
     }
 </style>

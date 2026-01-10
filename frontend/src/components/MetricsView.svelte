@@ -7,7 +7,7 @@
     export let loadName, metrics;
 </script>
 
-<div class="metrics-container" in:fade>
+<div in:fade>
     <h1>{loadName}</h1>
 
     <p>Number of runs in previous 24h: {metrics.num_runs_24h}</p>
@@ -42,22 +42,7 @@
     ></Gauge>
 
     <div>
-        <Phasor observed={metrics.zero_seen} nominal={metrics.zero_nom}></Phasor>
+        <Phasor observed={metrics.zero_seen} nominal={metrics.zero_nom}
+        ></Phasor>
     </div>
 </div>
-
-<style>
-    .metrics-container {
-        text-align: center;
-        width: 30%;
-        flex: 1;
-        /* margin-top: 10px; */
-        /* margin-bottom: 10px; */
-        margin-left: auto;
-        margin-right: 10px;
-        border: 2px solid gray;
-        border-radius: 10px;
-        box-shadow: 3px 1px 4px #888;
-        background-color: white;
-    }
-</style>
