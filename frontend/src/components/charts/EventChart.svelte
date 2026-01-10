@@ -1,7 +1,11 @@
 <script>
     import * as d3 from "d3";
     import Legend from "../visuals/Legend.svelte";
-    import { yPadding, eventChartMargin } from "./utilities";
+    import {
+        yPadding,
+        offEventChartMargin,
+        onEventChartMargin,
+    } from "./utilities";
     import { draw, fade } from "svelte/transition";
     import { quadIn, quadOut } from "svelte/easing";
 
@@ -11,6 +15,8 @@
         exemplar = false,
         off = false,
         showLegend = false;
+
+    let eventChartMargin = off ? offEventChartMargin : onEventChartMargin;
 
     const c1 = exemplar ? "#aec7e8" : "#1f77b4";
     const c2 = exemplar ? "#ffbb78" : "#ff7f0e";
@@ -24,9 +30,6 @@
     $: y2 = data["Q"];
 
     let xAxis, yAxis;
-
-    // const width = window.innerWidth * 0.35,
-    //     height = window.innerHeight * 0.47;
 
     let svg, rect, width, height;
 
@@ -60,12 +63,16 @@
 
     $: {
         d3.select(xAxis)
-            .call(d3.axisBottom(xAxisScale))
+            .call(
+                d3.axisBottom(xAxisScale).ticks(5).tickFormat(d3.format(".1f")),
+            )
             .style("font-size", "12px");
 
-        d3.select(yAxis)
-            .call(d3.axisLeft(yAxisScale))
-            .style("font-size", "12px");
+        if (!off) {
+            d3.select(yAxis)
+                .call(d3.axisLeft(yAxisScale))
+                .style("font-size", "12px");
+        }
     }
 </script>
 
@@ -123,6 +130,17 @@
             y2={eventChartMargin.top}
             stroke="black"
         />
+
+        {#if off}
+            <line
+                x1={eventChartMargin.left}
+                y1={eventChartMargin.top}
+                x2={eventChartMargin.left}
+                y2={height - eventChartMargin.bottom}
+                stroke="black"
+            />
+        {/if}
+
         <line
             x1={width - eventChartMargin.right}
             y1={eventChartMargin.top}
@@ -131,7 +149,7 @@
             stroke="black"
         />
 
-        {#each xAxisScale.ticks() as tick}
+        {#each xAxisScale.ticks(5) as tick}
             <line
                 x1={xAxisScale(tick)}
                 x2={xAxisScale(tick)}
@@ -161,16 +179,6 @@
             />
         {/each}
 
-        <text
-            x="50%"
-            y={height - eventChartMargin.bottom + 60}
-            text-anchor="middle"
-            font-family="sans-serif"
-            font-size="24px"
-        >
-            Time (s)
-        </text>
-
         {#if showLegend}
             <Legend
                 {c1}
@@ -187,16 +195,6 @@
         width: 100%;
         height: 100%;
     }
-    /* .event-chart-container {
-        width: 48%;
-        margin-left: auto;
-        margin-right: auto;
-        margin-bottom: 10px;
-        border: 2px solid gray;
-        border-radius: 10px;
-        box-shadow: 3px 1px 4px #888;
-        background-color: white;
-    } */
 
     .event-chart-container {
         display: flex;

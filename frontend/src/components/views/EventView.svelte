@@ -46,22 +46,15 @@
         });
 </script>
 
-<button
-    id="back-btn"
-    on:click={() => {
-        selectedInterval = [];
-    }}
->
-    Back
-</button>
-
 <div class="event-view-container">
     <div class="event-charts-container">
         <div class="row">
+            <p class="rotated">Observed</p>
             <EventChart data={onTransient} {yMin} {yMax} showLegend={true} />
             <EventChart data={offTransient} {yMin} {yMax} off={true} />
         </div>
         <div class="row">
+            <p class="rotated">Exemplar</p>
             <EventChart
                 data={onExemplar}
                 {yMin}
@@ -83,6 +76,15 @@
     {/await}
 </div>
 
+<button
+    id="back-btn"
+    on:click={() => {
+        selectedInterval = [];
+    }}
+>
+    Back
+</button>
+
 <svelte:window on:keydown={onKeyPress} />
 
 <style>
@@ -92,6 +94,15 @@
         left: 25px;
         font-family: sans-serif;
         font-size: 24px;
+    }
+
+    .rotated {
+        position: absolute;
+        top: 50%;
+        left: 0;
+        font-family: sans-serif;
+        font-size: 24px;
+        transform: translate(0, -100%) rotate(-90deg);
     }
 
     .event-view-container {
@@ -107,24 +118,18 @@
         flex-wrap: wrap;
         flex-direction: column;
         width: 70%;
-        /* margin-top: 10px; */
-        /* margin-bottom: 10px; */
-        /* background-color: blue; */
     }
 
     .row {
+        position: relative;
         display: flex;
-        /* width: 100%; */
         flex: 1;
         border: 2px solid gray;
         border-radius: 10px;
         box-shadow: 3px 1px 4px #888;
-        padding-left: 50px;
-        padding-right: 50px;
+        padding-left: 70px;
         margin-left: 10px;
         margin-right: 10px;
-        /* margin-bottom: 10px;
-        margin-top: 10px; */
     }
 
     .row:first-child {
