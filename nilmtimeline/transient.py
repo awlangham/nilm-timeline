@@ -6,15 +6,21 @@ class Transient:
         self.timestamps = data[:, 0] - data[0, 0]
         self.timestamps = self.timestamps / 1e6
 
-        self.P = data[:, 1] + data[:, 9] + data[:, 17]
-        self.Q = data[:, 2] + data[:, 10] + data[:, 18]
-
         if is_on:
             self.P -= np.mean(self.P[:5])
             self.Q -= np.mean(self.Q[:5])
         else:
             self.P -= np.mean(self.P[-5:])
             self.Q -= np.mean(self.Q[-5:])
+
+    def to_dict(self) -> str:
+        return {'timestamps': self.timestamps.tolist(), 'P': self.P.tolist(), 'Q': self.Q.tolist()}
+
+
+class ThreePhaseTransient(Transient):
+    def __init__(self, data, is_on=True):
+        self.P = data[:, 1] + data[:, 9] + data[:, 17]
+        self.Q = data[:, 2] + data[:, 10] + data[:, 18]
 
         alpha = np.exp(2 * np.pi * 1j / 3)
         A_inverse = np.ones((3, 3), dtype=complex)
@@ -43,6 +49,12 @@ class Transient:
 
         I0_seen = I0_i_ss + 1j * I0_q_ss
         self.zero_signature = I0_seen / 3
+        super().__init__(data, is_on)
 
-    def to_dict(self) -> str:
-        return {'timestamps': self.timestamps.tolist(), 'P': self.P.tolist(), 'Q': self.Q.tolist()}
+
+class SinglePhaseTransient(Transient):
+    def __init__(self, data, is_on=True):
+        self.P = data[:, 1]
+        self.Q = data[:, 2]
+        self.zero_signature = 0
+        super().__init__(data, is_on)

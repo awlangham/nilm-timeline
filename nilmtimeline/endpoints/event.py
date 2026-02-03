@@ -3,11 +3,11 @@ import numpy as np
 from fastapi import APIRouter, Request
 from joule.api import get_node
 
-from merlin.api import Installation
+from merlin.api import get_installation
 from merlin.utilities import trainola
 
-from nilmtimeline.transient import Transient
-from nilmtimeline.interval import find_intervals
+from nilmtimeline.transient import SinglePhaseTransient, ThreePhaseTransient
+# from nilmtimeline.interval import find_intervals
 
 router = APIRouter()
 
@@ -20,23 +20,27 @@ async def get_event(start_ts: int, end_ts: int, request: Request):
     events = await node.event_stream_read_list(request.app.dataset + '/events', start=start_ts, end=start_ts + 1)
     event_label = events[0].content['label']
 
-    current_installation = Installation(node)
+    current_installation = get_installation()
+    if current_installation.num_phases == 3:
+        TransientClass = ThreePhaseTransient
+    else:
+        TransientClass = SinglePhaseTransient
 
     # Get ON transient
     on_selected_data = await current_installation.get_transient(start_ts, start_ts + 1e6)
-    on_transient = Transient(on_selected_data)
+    on_transient = TransientClass(on_selected_data)
 
     # Get OFF transient
     off_selected_data = await current_installation.get_transient(end_ts - 1e6, end_ts)
-    off_transient = Transient(off_selected_data, is_on=False)
+    off_transient = TransientClass(off_selected_data, is_on=False)
 
     # Get ON exemplar
     on_exemplar_data = await current_installation.load_exemplar(event_label, 'OFF', 'ON')
-    on_exemplar = Transient(on_exemplar_data)
+    on_exemplar = TransientClass(on_exemplar_data)
 
     # Get OFF exemplar
     off_exemplar_data = await current_installation.load_exemplar(event_label, 'ON', 'OFF')
-    off_exemplar = Transient(off_exemplar_data, is_on=False)
+    off_exemplar = TransientClass(off_exemplar_data, is_on=False)
 
     json_filter = json.dumps([[['label', 'is', event_label]]])
     last_24h_events = await node.event_stream_read_list(request.app.dataset + '/events', start=start_ts - 24 * 60 * 60e6, end=start_ts, json_filter=json_filter)
@@ -50,8 +54,13 @@ async def get_event(start_ts: int, end_ts: int, request: Request):
 
     cf = current_installation.read_config()
     on_ss = cf['loads'][event_label]['states']['ON']
-    P_ss_nom = on_ss[0] + on_ss[2] + on_ss[4]
-    Q_ss_nom = on_ss[1] + on_ss[3] + on_ss[5]
+
+    if current_installation.num_phases == 3:
+        P_ss_nom = on_ss[0] + on_ss[2] + on_ss[4]
+        Q_ss_nom = on_ss[1] + on_ss[3] + on_ss[5]
+    else:
+        P_ss_nom = on_ss[0]
+        Q_ss_nom = on_ss[1]
 
     metrics = {
         'P_ss_nom': P_ss_nom,

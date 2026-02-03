@@ -3,7 +3,7 @@ from joule.api import get_node
 
 from joule.utilities import timestamp_to_human as h2ts
 
-from merlin.api import Installation
+from merlin.api import get_installation
 from nilmtimeline.interval import find_intervals
 
 router = APIRouter()
@@ -12,7 +12,7 @@ router = APIRouter()
 @router.get('/api/data')
 async def get_data(start_ts: int, end_ts: int, request: Request):
     node = get_node()
-    installation = Installation(node)
+    installation = get_installation()
 
     cf = installation.read_config()
     load_names = list(cf['loads'].keys())
