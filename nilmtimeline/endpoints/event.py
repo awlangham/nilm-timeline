@@ -35,11 +35,11 @@ async def get_event(start_ts: int, end_ts: int, request: Request):
     off_transient = TransientClass(off_selected_data, is_on=False)
 
     # Get ON exemplar
-    on_exemplar_data = await current_installation.load_exemplar(event_label, 'OFF', 'ON')
+    on_exemplar_data = await current_installation.get_exemplar(event_label, 'OFF', 'ON')
     on_exemplar = TransientClass(on_exemplar_data)
 
     # Get OFF exemplar
-    off_exemplar_data = await current_installation.load_exemplar(event_label, 'ON', 'OFF')
+    off_exemplar_data = await current_installation.get_exemplar(event_label, 'ON', 'OFF')
     off_exemplar = TransientClass(off_exemplar_data, is_on=False)
 
     json_filter = json.dumps([[['label', 'is', event_label]]])
