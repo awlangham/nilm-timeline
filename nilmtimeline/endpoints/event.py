@@ -72,7 +72,8 @@ async def get_event(start_ts: int, end_ts: int, request: Request):
         'on_distance': trainola(on_selected_data.T[1:], on_exemplar_data.T[1:]),
         'off_distance': trainola(off_selected_data.T[1:], off_exemplar_data.T[1:]),
         'zero_seen': [np.real(on_transient.zero_signature), np.imag(on_transient.zero_signature)],
-        'zero_nom': [np.real(on_exemplar.zero_signature), np.imag(on_exemplar.zero_signature)]
+        'zero_nom': [np.real(on_exemplar.zero_signature), np.imag(on_exemplar.zero_signature)],
+        'threshold': request.app.threshold
     }
 
     return {

@@ -1,7 +1,7 @@
 <script>
     import * as d3 from "d3";
 
-    export let observed, nominal;
+    export let observed, nominal, threshold;
 
     const width = 180,
         height = 180;
@@ -66,8 +66,8 @@
     <ellipse
         cx={xAxisScale(nominal[0])}
         cy={yAxisScale(nominal[1])}
-        rx={xAxisScale(nominal[0] + 0.01) - xAxisScale(nominal[0])}
-        ry={yAxisScale(nominal[1] + 0.01) - yAxisScale(nominal[1])}
+        rx={xAxisScale(nominal[0] + threshold) - xAxisScale(nominal[0])}
+        ry={yAxisScale(nominal[1] + threshold) - yAxisScale(nominal[1])}
         fill="green"
         fill-opacity="0.5"
     ></ellipse>

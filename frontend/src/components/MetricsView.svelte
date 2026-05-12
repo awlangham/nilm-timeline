@@ -1,6 +1,6 @@
 <script>
     import { fade } from "svelte/transition";
-    import { formatSeconds } from "./charts/utilities";
+    // import { formatSeconds } from "./charts/utilities";
     import Gauge from "./Gauge.svelte";
     import Phasor from "./Phasor.svelte";
 
@@ -42,7 +42,7 @@
     ></Gauge>
 
     <div>
-        <Phasor observed={metrics.zero_seen} nominal={metrics.zero_nom}
+        <Phasor observed={metrics.zero_seen} nominal={metrics.zero_nom} threshold={metrics.threshold}
         ></Phasor>
     </div>
 </div>
