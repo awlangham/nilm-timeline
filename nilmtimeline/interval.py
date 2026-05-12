@@ -2,19 +2,54 @@ import numpy as np
 from joule.utilities import time_now
 
 
-def find_intervals(events, load_name, on_exemplar_event, off_exemplar_event):
+def compute_zs_current(event, v_rms, sequence):
+    alpha = np.exp(2 * np.pi * 1j / 3)
+    A_inverse = np.ones((3, 3), dtype=complex)
+
+    if sequence == 'acb':
+        alpha = 1 / alpha
+
+    A_inverse[1, 1] = alpha
+    A_inverse[2, 2] = alpha
+    A_inverse[1, 2] = alpha ** 2
+    A_inverse[2, 1] = alpha ** 2
+
+    PA_ss = event.content['PA_ss']
+    QA_ss = event.content['QA_ss']
+
+    PB_ss = event.content['PB_ss']
+    QB_ss = event.content['QB_ss']
+
+    PC_ss = event.content['PC_ss']
+    QC_ss = event.content['QC_ss']
+
+    IA = (PA_ss - QA_ss * 1j) / v_rms
+    IB = (PB_ss - QB_ss * 1j) / (v_rms * alpha)
+    IC = (PC_ss - QC_ss * 1j) / (v_rms * alpha ** 2)
+
+    I_phase = np.array([IA, IB, IC])
+    I_sequence = (A_inverse @ I_phase).T / 3
+
+    I0_i, I0_q = np.real(I_sequence[0]), np.imag(I_sequence[0])
+    return (I0_i, I0_q)
+
+
+def check_zero_sequence(seen_event, exemplar_event, threshold, v_rms, sequence):
+    I0_i_seen, I0_q_seen = compute_zs_current(seen_event, v_rms, sequence)
+    I0_i_exemplar, I0_q_exemplar = compute_zs_current(exemplar_event, v_rms, sequence)
+
+    faulty = np.sqrt((I0_i_seen - I0_i_exemplar) ** 2 + (I0_q_seen - I0_q_exemplar) ** 2) > threshold
+    return faulty
+
+
+def find_intervals(events, load_name, on_exemplar_event, threshold, v_rms, sequence):
     start_time = None
     faulty = None
     intervals = []
     for event in events:
         if event.content['type'] == 'OFF to ON':
             start_time = event.start_time
-            # TODO: use both OFF and ON distances
-            # distance = event.content['distance']
-            # print(load_name)
-            faulty = False
-            # faulty = np.sqrt((event.content['I0_i'] - on_exemplar_event.content['I0_i']) ** 2 +
-                            #  (event.content['I0_q'] - on_exemplar_event.content['I0_q']) ** 2) > 0.01  # TO DO parametrize this
+            faulty = check_zero_sequence(event, on_exemplar_event, threshold, v_rms, sequence)
         elif event.content['type'] == 'ON to OFF' and start_time is not None:
             interval = Interval(load_name, start_time, event.end_time, faulty)
             intervals.append(interval.to_dict())
