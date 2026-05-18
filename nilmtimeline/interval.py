@@ -49,7 +49,10 @@ def find_intervals(events, load_name, on_exemplar_event, threshold, v_rms, seque
     for event in events:
         if event.content['type'] == 'OFF to ON':
             start_time = event.start_time
-            faulty = check_zero_sequence(event, on_exemplar_event, threshold, v_rms, sequence)
+            if threshold is None:
+                fault = None
+            else:    
+                faulty = check_zero_sequence(event, on_exemplar_event, threshold, v_rms, sequence)
         elif event.content['type'] == 'ON to OFF' and start_time is not None:
             interval = Interval(load_name, start_time, event.end_time, faulty)
             intervals.append(interval.to_dict())

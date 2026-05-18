@@ -62,6 +62,11 @@ async def get_event(start_ts: int, end_ts: int, request: Request):
         P_ss_nom = on_ss[0]
         Q_ss_nom = on_ss[1]
 
+    try:
+        threshold = request.app.thresholds[event_label]
+    except KeyError:
+        threshold = None
+
     metrics = {
         'P_ss_nom': P_ss_nom,
         'Q_ss_nom': Q_ss_nom,
@@ -73,7 +78,7 @@ async def get_event(start_ts: int, end_ts: int, request: Request):
         'off_distance': trainola(off_selected_data.T[1:], off_exemplar_data.T[1:]),
         'zero_seen': [np.real(on_transient.zero_signature), np.imag(on_transient.zero_signature)],
         'zero_nom': [np.real(on_exemplar.zero_signature), np.imag(on_exemplar.zero_signature)],
-        'threshold': request.app.threshold
+        'threshold': threshold
     }
 
     return {

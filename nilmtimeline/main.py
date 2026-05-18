@@ -3,6 +3,9 @@ from fastapi.staticfiles import StaticFiles
 import uvicorn
 from importlib.resources import files
 import click
+from pathlib import Path
+from merlin.api import get_installation
+import json
 
 import nilmtimeline
 from nilmtimeline.endpoints import range, data, event
@@ -13,17 +16,19 @@ app.include_router(range.router)
 app.include_router(data.router)
 app.include_router(event.router)
 
+default_path = Path('/opt/configs')
+config_filename = str(default_path / 'nilmtimeline.json') if default_path.exists() else str(files(nilmtimeline) / 'nilmtimeline.json')
+
+with open(config_filename, 'r') as nilm_timeline_config:
+    cf = json.load(nilm_timeline_config)
+    merlin_config = get_installation().read_config()
+    app.dataset = merlin_config['stream_name']
+    app.voltage = cf['voltage']
+    app.sequence = cf['sequence']
+    app.thresholds = cf['thresholds']
 
 @click.command()
-@click.argument('dataset')
-@click.argument('threshold', type=float)
-@click.argument('voltage', type=float)
-@click.argument('sequence', type=click.Choice(['abc', 'acb']))
-def run(dataset: str, threshold: float, voltage: float, sequence: str):
-    app.dataset = dataset
-    app.threshold = threshold
-    app.voltage = voltage
-    app.sequence = sequence
+def run():
     static_path = files(nilmtimeline).joinpath('static')
     app.mount('/', StaticFiles(directory=static_path, html=True), name='static')
     uvicorn.run('nilmtimeline.main:app', host='', port=8051)

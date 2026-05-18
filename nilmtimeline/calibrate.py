@@ -4,14 +4,16 @@ import click
 import matplotlib.pyplot as plt
 from joule.api import get_node
 from joule.utilities import human_to_timestamp as h2ts
+from merlin.api import get_installation
 
 
 @click.command()
-@click.argument('stream')
 @click.option('-s', '--start_time', required=True)
 @click.option('-e', '--end_time', required=True)
-def run(stream: str, start_time: str, end_time: str):
-    prep_data = asyncio.run(_get_prep_data(stream, h2ts(start_time), h2ts(end_time)))
+def run(start_time: str, end_time: str):
+    merlin_config = get_installation().read_config()
+    stream = merlin_config['stream_name']
+    prep_data = asyncio.run(_get_prep_data(stream + '/prep', h2ts(start_time), h2ts(end_time)))
     timestamps = prep_data[:, 0]
     timestamps -= timestamps[0]
     timestamps = timestamps / 1e6
