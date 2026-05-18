@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 
-import sys
 import uvicorn
-
-from main import app
 
 
 if __name__ == '__main__':

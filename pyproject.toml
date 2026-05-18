@@ -22,4 +22,5 @@ dependencies = ["numpy", "matplotlib", "fastapi", "uvicorn", "click", "joule", "
 
 [project.scripts]
 nilm-timeline = "nilmtimeline.main:run"
-nilm-timeline-calibrate = "nilmtimeline.calibrate:run"
+nilm-timeline-calibrate = "nilmtimeline.calibrate:calibrate"
+nilm-timeline-configure = "nilmtimeline.configure:configure"

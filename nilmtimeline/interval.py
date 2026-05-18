@@ -42,17 +42,21 @@ def check_zero_sequence(seen_event, exemplar_event, threshold, v_rms, sequence):
     return faulty
 
 
-def find_intervals(events, load_name, on_exemplar_event, threshold, v_rms, sequence):
+def find_intervals(events, load_name, on_exemplar_event, request):
     start_time = None
     faulty = None
     intervals = []
     for event in events:
         if event.content['type'] == 'OFF to ON':
             start_time = event.start_time
-            if threshold is None:
-                fault = None
-            else:    
+            if request.app.i0:
+                threshold = request.app.thresholds[load_name]
+                v_rms = request.app.voltage
+                sequence = request.app.sequence
                 faulty = check_zero_sequence(event, on_exemplar_event, threshold, v_rms, sequence)
+            else:
+                faulty = None
+
         elif event.content['type'] == 'ON to OFF' and start_time is not None:
             interval = Interval(load_name, start_time, event.end_time, faulty)
             intervals.append(interval.to_dict())

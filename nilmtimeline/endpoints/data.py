@@ -45,11 +45,7 @@ async def get_data(start_ts: int, end_ts: int, request: Request):
             except KeyError:
                 pass
 
-        try:
-            threshold = request.app.thresholds[load_name]
-        except KeyError:
-            threshold = None
-        intervals += find_intervals(load_events, load_name, on_exemplar_event, threshold, request.app.voltage, request.app.sequence)
+        intervals += find_intervals(load_events, load_name, on_exemplar_event, request)
 
     await node.close()
 

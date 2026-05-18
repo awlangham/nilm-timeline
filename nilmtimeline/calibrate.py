@@ -10,7 +10,11 @@ from merlin.api import get_installation
 @click.command()
 @click.option('-s', '--start_time', required=True)
 @click.option('-e', '--end_time', required=True)
-def run(start_time: str, end_time: str):
+def calibrate(start_time: str, end_time: str):
+    """
+    Calibrate I0 sequence.
+    """
+
     merlin_config = get_installation().read_config()
     stream = merlin_config['stream_name']
     prep_data = asyncio.run(_get_prep_data(stream + '/prep', h2ts(start_time), h2ts(end_time)))

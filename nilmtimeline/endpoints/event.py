@@ -62,9 +62,9 @@ async def get_event(start_ts: int, end_ts: int, request: Request):
         P_ss_nom = on_ss[0]
         Q_ss_nom = on_ss[1]
 
-    try:
+    if request.app.i0:
         threshold = request.app.thresholds[event_label]
-    except KeyError:
+    else:
         threshold = None
 
     metrics = {
