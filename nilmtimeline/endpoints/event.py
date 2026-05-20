@@ -7,7 +7,6 @@ from merlin.api import get_installation
 from merlin.utilities import trainola
 
 from nilmtimeline.transient import SinglePhaseTransient, ThreePhaseTransient
-# from nilmtimeline.interval import find_intervals
 
 router = APIRouter()
 
@@ -63,7 +62,7 @@ async def get_event(start_ts: int, end_ts: int, request: Request):
         Q_ss_nom = on_ss[1]
 
     if request.app.i0:
-        threshold = request.app.thresholds[event_label]
+        threshold = request.app.loads[event_label]['threshold']
     else:
         threshold = None
 

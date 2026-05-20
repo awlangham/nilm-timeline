@@ -45,15 +45,15 @@ def check_zero_sequence(seen_event, exemplar_event, threshold, v_rms, sequence):
 def find_intervals(events, load_name, on_exemplar_event, request):
     start_time = None
     faulty = None
+    load_threshold = request.app.loads[load_name]['threshold']
     intervals = []
     for event in events:
         if event.content['type'] == 'OFF to ON':
             start_time = event.start_time
-            if request.app.i0:
-                threshold = request.app.thresholds[load_name]
+            if request.app.i0 and load_threshold is not None:
                 v_rms = request.app.voltage
                 sequence = request.app.sequence
-                faulty = check_zero_sequence(event, on_exemplar_event, threshold, v_rms, sequence)
+                faulty = check_zero_sequence(event, on_exemplar_event, load_threshold, v_rms, sequence)
             else:
                 faulty = None
 

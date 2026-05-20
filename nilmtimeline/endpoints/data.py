@@ -11,18 +11,17 @@ router = APIRouter()
 async def get_data(start_ts: int, end_ts: int, request: Request):
     node = get_node()
     installation = get_installation()
+    
+    load_names = list(request.app.loads.keys())
 
-    cf = installation.read_config()
-    load_names = list(cf['loads'].keys())
+    events = await node.event_stream_read_list(
+        request.app.dataset + '/events',
+        start=start_ts,
+        end=end_ts
+    )
 
     intervals = []
     for load_name in load_names:
-        events = await node.event_stream_read_list(
-            request.app.dataset + '/events',
-            start=start_ts,
-            end=end_ts
-        )
-
         on_exemplar = await installation.get_exemplar(load_name, 'OFF', 'ON')
         on_exemplar_start_ts, on_exemplar_end_ts = on_exemplar[0, 0], on_exemplar[-1, 0]
         on_exemplar_event = (await node.event_stream_read_list(request.app.dataset + '/events', start=on_exemplar_start_ts, end=on_exemplar_end_ts))[0]

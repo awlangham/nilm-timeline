@@ -20,14 +20,15 @@ with open(nilmtimeline.config_filename, 'r') as nilm_timeline_config:
     merlin_config = get_installation().read_config()
     app.dataset = merlin_config['stream_name']
 
-    if cf == {}:
-        # Blank config, don't enable I0
-        app.i0 = False
-    else:
+    if cf['zero_sequence']:
         app.i0 = True
         app.voltage = cf['voltage']
         app.sequence = cf['sequence']
-        app.thresholds = cf['thresholds']
+    else:
+        app.i0 = False
+
+    app.loads = cf['loads']
+
 
 @click.version_option()
 @click.command()
