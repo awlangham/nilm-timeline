@@ -50,16 +50,20 @@
 
     let needle;
 
-    $: theta = (90 * actualValue) / nominalValue;
-
     $: d3.select(needle)
         .transition()
         .duration(500)
         .ease(d3.easeCubic)
         .attr("transform", "rotate(" + theta + ")");
 
-    $: upperBound = 1.5 * nominalValue;
-    $: lowerBound = 0.5 * nominalValue;
+    $: upperBound = Math.max(1.5 * nominalValue, nominalValue + 5);
+    $: lowerBound = Math.min(0.5 * nominalValue, nominalValue - 5);
+
+    $: angleScale = d3
+        .scaleLinear()
+        .domain([lowerBound, nominalValue, upperBound])
+        .range([45, 90, 135]);
+    $: theta = angleScale(actualValue);
 </script>
 
 <svg
@@ -70,7 +74,7 @@
     <g transform="translate({width / 2 + marginLeft}, {height + marginTop})">
         <path d={lowerBarArc()} fill="yellow" stroke={needleColor}></path>
         <path d={upperBarArc()} fill="yellow" stroke={needleColor}></path>
-        <path d="{greenBarArc()}" fill="green" stroke={needleColor}></path>
+        <path d={greenBarArc()} fill="green" stroke={needleColor}></path>
         <path id="labelsArc" d={labelsArc()}></path>
         <circle cx="0" cy="0" r="15" fill={needleColor}></circle>
         <path
